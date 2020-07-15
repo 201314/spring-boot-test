@@ -15,9 +15,9 @@ springboot集成的一些相关练习
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  git clone git@gitee.com:_linzl/spring-dependencies-ext.git
+2.  mvn install spring-dependencies-ext
+3.  导入本项目
 
 #### 参与贡献
 
