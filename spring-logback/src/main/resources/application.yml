@@ -1,0 +1,16 @@
+server:
+  port: 9080
+  undertow:
+    io-threads: 4
+    worker-threads: 32
+    buffer-size:  1024
+    direct-buffers: true  
+spring:
+  application:
+    name: spring-logback
+  servlet:
+    multipart:
+      max-file-size:  50MB
+      max-request-size:  200MB
+      #Tomcat接收上传文件的临时文件路径,必须存在
+      location: D:/etc/tmpFile1/    

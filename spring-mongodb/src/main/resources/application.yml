@@ -1,0 +1,13 @@
+logging:
+  level:
+    com.gitee: debug
+server:
+  port: 8081
+spring:
+  application:
+    name: spring-mongodb
+  data:
+    mongodb:
+      host: 192.168.3.173
+      port: 27017
+      database: devtest

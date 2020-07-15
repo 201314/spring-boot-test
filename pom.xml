@@ -1,0 +1,135 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>spring-boot-test</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <parent>
+        <groupId>com.gitee.linzl</groupId>
+        <artifactId>spring-dependencies-ext</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <developers>
+        <developer>
+            <name>fighting</name>
+            <email>2225010489@qq.com</email>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>ftp-spring-boot-starter</module>
+        <module>oss-spring-boot-starter</module>
+        <module>swagger-spring-boot-starter</module>
+        <module>spring-aop-ioc</module>
+        <module>spring-commons</module>
+        <module>spring-elasticsearch</module>
+        <module>spring-flowable</module>
+        <module>spring-kafka</module>
+        <module>spring-mongodb</module>
+        <module>spring-redis-lock</module>
+        <module>spring-rabbitmq-producer</module>
+        <module>spring-rabbitmq-consumer</module>
+        <module>spring-log-aop</module>
+        <module>spring-logback</module>
+        <module>spring-websocket</module>
+        <module>spring-quartz-batch</module>
+        <module>spring-message</module>
+        <module>spring-mybatis-code-generator</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <!-- 只有在使用springboot启动类下打包使用，普通Jar不能使用 -->
+                    <!-- 所以此plugin插件，按需放在打成springboot jar的pom下 -->
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>build-info</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${javadoc.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <configuration>
+                        <encoding>utf-8</encoding>
+                        <!-- 需要加入，因为maven默认的是${},而springbooot 默认会把此替换成@{} -->
+                        <useDefaultDelimiters>true</useDefaultDelimiters>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <!-- 如果mapper.xml是放在src/main/java目录下，需配置以下 -->
+        <!-- 各个项目自己去配置 -->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/mapper/*.xml</include>
+                    <include>**/mappers/*.xml</include>
+                </includes>
+            </resource>
+            <!--指定资源的位置 -->
+            <!-- 各个项目自己去配置 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- 加入此属性，才会进行过滤 -->
+                <!--<filtering>false</filtering>-->
+                <!--<includes>-->
+                <!--<include>/**</include>-->
+                <!--<include>**/mapper/*.xml</include>-->
+                <!--<include>**/mappers/*.xml</include>-->
+                <!--</includes>-->
+            </resource>
+        </resources>
+    </build>
+</project>

@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.gitee.linzl.boot.autoconfigure.oss.QiniuOSSAutoConfiguration,\
+com.gitee.linzl.boot.autoconfigure.oss.AliyunOSSAutoConfiguration,\
+com.gitee.linzl.boot.autoconfigure.oss.DefaultOSSAutoConfiguration

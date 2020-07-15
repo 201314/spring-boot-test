@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.gitee.linzl.boot.autoconfigure.ftp.FtpClientAutoConfiguration

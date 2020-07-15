@@ -1,0 +1,5 @@
+server:
+  port: 16032
+spring:
+  application:
+    name: spring-message

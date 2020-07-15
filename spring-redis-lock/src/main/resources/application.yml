@@ -1,0 +1,10 @@
+server:
+  port: 8081
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+#    password: pwd
+    database: 4  #从0开始数起，4是第5个数据库的下标
+  application:
+    name: spring-redis-lock

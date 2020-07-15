@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.gitee.linzl.commons.autoconfigure.exception.ErrorMvcAutoConfigurationExt,\
+com.gitee.linzl.commons.autoconfigure.token.TokenAutoConfiguration
