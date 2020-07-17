@@ -5,6 +5,7 @@ import com.gitee.linzl.commons.mybatis.interceptor.FieldEncryptInterceptor;
 import com.gitee.linzl.commons.mybatis.service.CryptService;
 import com.gitee.linzl.commons.mybatis.service.OptUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,16 +19,14 @@ import org.springframework.util.DigestUtils;
  * @author linzhenlie
  * @date 2020-06-05
  */
-@ConditionalOnClass(name = "org.apache.ibatis.annotations.Mapper")
+@ConditionalOnClass(value = Mapper.class)
 @Configuration
 @Slf4j
 public class MybatisConfig {
     @ConditionalOnMissingBean(value = {OptUserService.class})
     @Bean
     public OptUserService defaultOptUserService() {
-        return () -> {
-            return "sys";
-        };
+        return () -> "sys";
     }
 
     @ConditionalOnMissingBean(value = {CryptService.class})

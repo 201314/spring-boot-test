@@ -4,10 +4,8 @@ import com.alibaba.fastjson.serializer.*;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gitee.linzl.commons.constants.GlobalConstants;
 import com.gitee.linzl.commons.fileupload.CustomMultipartResolver;
 import com.gitee.linzl.commons.interceptor.DefaultPermissionTokenInterceptor;
@@ -68,13 +66,6 @@ public class CommonConfig implements WebMvcConfigurer {
             serializeConfig.put(LocalDate.class, instance);
             // 驼峰转下划线
             // FastJson配置驼峰命名规则会导致spring boot admin 或者 swagger-ui无法正常使用
-            // serializeConfig.setPropertyNamingStrategy(PropertyNamingStrategy.SnakeCase);
-            // NameFilter nameFilter = (object, name, value) -> name;
-            // serializeConfig.addFilter(UiConfiguration.class, nameFilter);
-            // serializeConfig.addFilter(SwaggerResource.class, nameFilter);
-            // serializeConfig.addFilter(MetricsEndpoint.MetricResponse.class, nameFilter);
-            // serializeConfig.addFilter(EnvironmentEndpoint.EnvironmentDescriptor.class,
-            // nameFilter);
             fastJsonConfig.setSerializeConfig(serializeConfig);
 
             // fastjson 统一返回时间戳,由前端自己处理格式
@@ -99,16 +90,9 @@ public class CommonConfig implements WebMvcConfigurer {
         } else {
             Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
             builder.serializationInclusion(JsonInclude.Include.NON_NULL);
-            ObjectMapper objectMapper = builder.build();
-            SimpleModule simpleModule = new SimpleModule();
-            //simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
-            simpleModule.addSerializer(LocalDateTime.class, LocalDateToJackSonLongSerializer.instance);
-            simpleModule.addSerializer(LocalDate.class, LocalDateToJackSonLongSerializer.instance);
-            objectMapper.registerModule(simpleModule);
-            // 将时间序列化为long
-            // objectMapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             // 忽略 transient 修饰的属性
-            objectMapper.enable(MapperFeature.PROPAGATE_TRANSIENT_MARKER);
+            builder.featuresToEnable(MapperFeature.PROPAGATE_TRANSIENT_MARKER);
+            ObjectMapper objectMapper = builder.build();
             converters.add(0, new MappingJackson2HttpMessageConverter(objectMapper));
             if (log.isDebugEnabled()) {
                 log.debug("初始化JackSon,默认时间格式为long");
@@ -135,27 +119,6 @@ public class CommonConfig implements WebMvcConfigurer {
         }
     }
 
-    /**
-     * 日期序列化
-     * <p>
-     * LocalDateSerializer \ LocalDateTimeSerializer 默认返回的是String
-     */
-    @JacksonStdImpl
-    public static class LocalDateToJackSonLongSerializer extends JsonSerializer<Object> {
-        public static final LocalDateToJackSonLongSerializer instance = new LocalDateToJackSonLongSerializer();
-
-        @Override
-        public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            if (value instanceof LocalDateTime) {
-                LocalDateTime time = (LocalDateTime) value;
-                gen.writeNumber(time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-            }
-            if (value instanceof LocalDate) {
-                LocalDate time = (LocalDate) value;
-                gen.writeNumber(time.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
-            }
-        }
-    }
 
     @Profile({"dev"})
     @Override
