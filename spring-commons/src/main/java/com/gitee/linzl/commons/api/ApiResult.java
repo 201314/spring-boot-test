@@ -2,6 +2,7 @@ package com.gitee.linzl.commons.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gitee.linzl.commons.enums.BaseErrorCode;
 import com.gitee.linzl.commons.enums.IBaseErrorCode;
 import lombok.Getter;
@@ -51,14 +52,14 @@ public class ApiResult<T> {
     public ApiResult(IBaseErrorCode base) {
         this.code = base.getCode();
         this.msg = base.getMsg();
-        this.status = base == BaseErrorCode.SUCCESS ? true : false;
+        this.status = (base == BaseErrorCode.SUCCESS);
     }
 
     public ApiResult(IBaseErrorCode base, T data) {
         this.code = base.getCode();
         this.msg = base.getMsg();
         this.data = data;
-        this.status = base == BaseErrorCode.SUCCESS ? true : false;
+        this.status = (base == BaseErrorCode.SUCCESS);
     }
 
     /**
@@ -111,11 +112,13 @@ public class ApiResult<T> {
         return result;
     }
 
+    @JsonIgnore
     @JSONField(serialize = false)
     public boolean isSuccess() {
         return this.status;
     }
 
+    @JsonIgnore
     @JSONField(serialize = false)
     public boolean isFail() {
         return this.status == false;
