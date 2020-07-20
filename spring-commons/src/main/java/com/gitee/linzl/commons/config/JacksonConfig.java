@@ -18,8 +18,6 @@ import java.time.ZoneId;
  * @date 2020/7/17
  * @see org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
  */
-@Configuration(proxyBeanMethods = false)
-@ConditionalOnClass(ObjectMapper.class)
 @JsonComponent
 public class JacksonConfig {
     /**

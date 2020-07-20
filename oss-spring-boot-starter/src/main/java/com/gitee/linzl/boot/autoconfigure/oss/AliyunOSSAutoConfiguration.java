@@ -18,7 +18,7 @@ import com.gitee.linzl.oss.service.impl.AliyunServiceImpl;
  * 用于不使用@ConfigurationProperties注解的属性配置,可以参考mybatisplus-spring-boot-starter
  * 
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(OSSProperties.class)
 @ConditionalOnProperty(prefix = OSSProperties.OSSPREFIX, name = "type", havingValue = "aliyun")
 public class AliyunOSSAutoConfiguration {

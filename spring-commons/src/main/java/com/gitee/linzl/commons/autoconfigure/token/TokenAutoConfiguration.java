@@ -21,26 +21,30 @@ import java.util.Base64;
  * @author linzhenlie
  * @date 2019/9/2
  */
-@Configuration
-@EnableConfigurationProperties({TokenProperties.class})
 @Slf4j
+@Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties({TokenProperties.class})
 public class TokenAutoConfiguration {
     @Autowired
     private TokenProperties properties;
 
-    @Bean
     @ConditionalOnProperty(prefix = TokenProperties.TOKENPREFIX, name = "enable", havingValue = "true")
-    @ConditionalOnMissingBean(ITokenService.class)
+    @Bean
     public ITokenService tokenService() throws NoSuchAlgorithmException, InvalidKeySpecException {
         log.debug("TokenAutoConfiguration初始化=====ITokenService");
 
         KeyFactory kf = KeyFactory.getInstance("RSA");
-
         EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(properties.getPrivateKey()));
         Key privateKey = kf.generatePrivate(spec);
 
         spec = new X509EncodedKeySpec(Base64.getDecoder().decode(properties.getPublicKey()));
         Key publicKey = kf.generatePublic(spec);
-        return new TokenServiceImpl(properties, publicKey, privateKey);
+        return new TokenServiceHandler(properties, publicKey, privateKey);
+    }
+
+    @ConditionalOnMissingBean(ITokenService.class)
+    @Bean
+    public ITokenService defaultToken() {
+        return new DefaultTokenHandler();
     }
 }

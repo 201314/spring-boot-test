@@ -15,7 +15,7 @@ import java.util.Objects;
  * @author linzhenlie
  * @date 2019/8/28
  */
-public class TokenServiceImpl implements ITokenService {
+public class TokenServiceHandler implements ITokenService {
     private TokenProperties properties;
     /**
      * 公钥
@@ -31,7 +31,7 @@ public class TokenServiceImpl implements ITokenService {
      * @param pubKey     公钥，用于验签
      * @param priKey     私钥，用于加签
      */
-    public TokenServiceImpl(TokenProperties properties, Key pubKey, Key priKey) {
+    public TokenServiceHandler(TokenProperties properties, Key pubKey, Key priKey) {
         this.properties = properties;
         this.pubkey = pubKey;
         this.priKey = priKey;

@@ -10,6 +10,7 @@ import com.gitee.linzl.commons.constants.GlobalConstants;
 import com.gitee.linzl.commons.fileupload.CustomMultipartResolver;
 import com.gitee.linzl.commons.interceptor.DefaultPermissionTokenInterceptor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -191,10 +192,14 @@ public class CommonConfig implements WebMvcConfigurer {
         configurer.enable();
     }
 
-    @Profile({"dev"})
+    @Bean
+    public DefaultPermissionTokenInterceptor tokenInterceptor() {
+        return new DefaultPermissionTokenInterceptor();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new DefaultPermissionTokenInterceptor()).addPathPatterns("/**")
+        registry.addInterceptor(this.tokenInterceptor()).addPathPatterns("/**")
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
 //		registry.addInterceptor(new ControllerValidatorInterceptor()).addPathPatterns("/**");
     }

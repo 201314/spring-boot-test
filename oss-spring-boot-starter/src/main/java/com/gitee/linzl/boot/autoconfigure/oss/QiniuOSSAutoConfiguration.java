@@ -23,10 +23,10 @@ import java.nio.file.Paths;
  * <p>
  * 用于不使用@ConfigurationProperties注解的属性配置,可以参考mybatisplus-spring-boot-starter
  */
-@org.springframework.context.annotation.Configuration
+@Slf4j
+@org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(OSSProperties.class)
 @ConditionalOnProperty(prefix = OSSProperties.OSSPREFIX, name = "type", havingValue = "qiniu")
-@Slf4j
 public class QiniuOSSAutoConfiguration {
     private OSSProperties properties;
 

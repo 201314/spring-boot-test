@@ -1,9 +1,7 @@
 package com.gitee.linzl.boot.autoconfigure.ftp;
 
-import java.util.Objects;
-
-import javax.annotation.PreDestroy;
-
+import com.gitee.linzl.ftp.core.FtpClientTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +10,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.gitee.linzl.ftp.core.FtpClientTemplate;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PreDestroy;
+import java.util.Objects;
 
 @Slf4j
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ FtpClientTemplate.class })
 @EnableConfigurationProperties(FtpClientProperties.class)
 public class FtpClientAutoConfiguration {
