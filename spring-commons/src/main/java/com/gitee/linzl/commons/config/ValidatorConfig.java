@@ -18,6 +18,7 @@ public class ValidatorConfig {
      * 只要检测到一个验证错误就快速失败
      *
      * @return
+     * @see org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
      */
     @Bean
     public Validator validator() {

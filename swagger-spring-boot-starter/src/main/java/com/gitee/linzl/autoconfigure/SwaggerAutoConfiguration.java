@@ -29,9 +29,9 @@ import static springfox.documentation.builders.PathSelectors.regex;
  * @author linzhenlie
  * @date 2019/8/29
  */
-@Configuration
-@EnableConfigurationProperties(SwaggerProperties.class)
 @Slf4j
+@Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(SwaggerProperties.class)
 @EnableSwagger2
 public class SwaggerAutoConfiguration implements WebMvcConfigurer {
     @Autowired

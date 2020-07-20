@@ -17,6 +17,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -39,6 +40,7 @@ public class PerformanceAspect {
         HttpServletRequest request = servletRequestAttributes.getRequest();
 
         StopWatch clock = new StopWatch(UUID.randomUUID().toString());
+        Date startTime = new Date();
         clock.start();
 
         Object result = null;
@@ -74,13 +76,14 @@ public class PerformanceAspect {
                 sbLog.append("IP【").append(UserClientUtil.builder(request).getIp()).append("】,")
 
                         .append("key【").append(clock.getId()).append("】,")
+                        .append("uri【").append(request.getRequestURI()).append("】,")
+                        .append("postMethod【").append(request.getMethod()).append("】,")
 
                         .append("访问目标【").append(method.getDeclaringClass().getName()).append("#").append(method.getName()).append("】,")
-
+                        .append("执行开始时间【").append(startTime).append("】,")
                         .append("执行耗时【").append(clock.getTotalTimeMillis()).append(" ms").append("】,")
 
                         .append("输入数据【").append(JSON.toJSON(json)).append("】,")
-
                         .append("输出数据【").append(JSON.toJSON(result)).append("】");
                 log.debug(sbLog.toString());
             }

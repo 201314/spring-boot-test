@@ -51,7 +51,7 @@ public class DefaultPermissionTokenInterceptor extends HandlerInterceptorAdapter
             log.debug("【{}】,类不用验证Token", handlerMethod.getMethod().getDeclaringClass());
             return true;
         }
-        ApiResult resp = processToken(request, response, handler);
+        ApiResult resp = processToken(request, response, handlerMethod);
         if (resp.isSuccess()) {
             return true;
         }
@@ -62,10 +62,9 @@ public class DefaultPermissionTokenInterceptor extends HandlerInterceptorAdapter
     /**
      * @param request
      * @param response
-     * @param handler
-     * @return boolean
+     * @param handlerMethod
      */
-    private ApiResult processToken(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    protected ApiResult processToken(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         String token = request.getHeader(GlobalConstants.ACCESS_TOKEN);
         return checkToken(token);
     }
