@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.Servlet;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -35,18 +34,17 @@ import java.util.stream.Collectors;
 @AutoConfigureBefore(WebMvcAutoConfiguration.class)
 @EnableConfigurationProperties({ServerProperties.class})
 public class ErrorMvcAutoConfigurationExt {
-    private List<ErrorViewResolver> errorViewResolvers;
     private final ServerProperties serverProperties;
 
     public ErrorMvcAutoConfigurationExt(ServerProperties serverProperties,
                                         ObjectProvider<ErrorViewResolver> errorViewResolvers) {
         this.serverProperties = serverProperties;
-        this.errorViewResolvers = errorViewResolvers.orderedStream().collect(Collectors.toList());
     }
 
     @Bean
-	@ConditionalOnMissingBean(value = ErrorController.class, search = SearchStrategy.CURRENT)
-    public BasicErrorControllerExt basicErrorControllerExt(ErrorAttributes errorAttributes) {
-        return new BasicErrorControllerExt(errorAttributes, this.serverProperties.getError(), this.errorViewResolvers);
+    @ConditionalOnMissingBean(value = ErrorController.class, search = SearchStrategy.CURRENT)
+    public BasicErrorControllerExt basicErrorControllerExt(ErrorAttributes errorAttributes,
+                                                           ObjectProvider<ErrorViewResolver> errorViewResolvers) {
+        return new BasicErrorControllerExt(errorAttributes, this.serverProperties.getError(), errorViewResolvers.orderedStream().collect(Collectors.toList()));
     }
 }

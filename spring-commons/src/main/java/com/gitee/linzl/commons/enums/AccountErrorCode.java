@@ -24,7 +24,7 @@ public enum AccountErrorCode implements IBaseErrorCode {
      */
     private final String code;
     /**
-     * 英文
+     * 中文
      */
     private final String msg;
     /**

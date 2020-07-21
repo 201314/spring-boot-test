@@ -5,9 +5,9 @@ import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.enums.BaseErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
-import org.springframework.boot.autoconfigure.web.ErrorProperties.IncludeStacktrace;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * BasicErrorControllerExt不能被自定义扫描Controller扫描到，否则无法启动
  * <p>
- * 参考 BasicErrorController修改
+ * 参考 org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController修改
  *
  * @author linzl
  * @description
@@ -57,11 +57,12 @@ public class BasicErrorControllerExt extends AbstractErrorController {
     public ModelAndView errorHtml(HttpServletRequest request, HttpServletResponse response) {
         HttpStatus status = getStatus(request);
         log.error("接口请求错误，http status:【{}】", status);
-        Map<String, Object> model = getErrorAttributes(request, isIncludeStackTrace(request, MediaType.TEXT_HTML));
+
+        Map<String, Object> model = getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.TEXT_HTML));
         response.setStatus(status.value());
         // 进入源码，可知道如果没有找到对应页面，则根据状态码分别指向 4xx,5xx 静态页
         ModelAndView modelAndView = resolveErrorView(request, response, status, model);
-        return (modelAndView == null ? new ModelAndView("error", model) : modelAndView);
+        return (modelAndView != null ? modelAndView : new ModelAndView("error", model));
     }
 
     @RequestMapping
@@ -76,6 +77,23 @@ public class BasicErrorControllerExt extends AbstractErrorController {
         return new ResponseEntity<>(rep, HttpStatus.OK);
     }
 
+    protected ErrorAttributeOptions getErrorAttributeOptions(HttpServletRequest request, MediaType mediaType) {
+        ErrorAttributeOptions options = ErrorAttributeOptions.defaults();
+        if (this.errorProperties.isIncludeException()) {
+            options = options.including(ErrorAttributeOptions.Include.EXCEPTION);
+        }
+        if (isIncludeStackTrace(request, mediaType)) {
+            options = options.including(ErrorAttributeOptions.Include.STACK_TRACE);
+        }
+        if (isIncludeMessage(request, mediaType)) {
+            options = options.including(ErrorAttributeOptions.Include.MESSAGE);
+        }
+        if (isIncludeBindingErrors(request, mediaType)) {
+            options = options.including(ErrorAttributeOptions.Include.BINDING_ERRORS);
+        }
+        return options;
+    }
+
     /**
      * Determine if the stacktrace attribute should be included.
      *
@@ -83,14 +101,61 @@ public class BasicErrorControllerExt extends AbstractErrorController {
      * @param produces the media type produced (or {@code MediaType.ALL})
      * @return if the stacktrace attribute should be included
      */
+    @SuppressWarnings("deprecation")
     protected boolean isIncludeStackTrace(HttpServletRequest request, MediaType produces) {
-        IncludeStacktrace include = this.errorProperties.getIncludeStacktrace();
-        if (include == IncludeStacktrace.ALWAYS) {
-            return true;
+        switch (getErrorProperties().getIncludeStacktrace()) {
+            case ALWAYS:
+                return true;
+            case ON_PARAM:
+            case ON_TRACE_PARAM:
+                return getTraceParameter(request);
+            default:
+                return false;
         }
-        if (include == IncludeStacktrace.ON_TRACE_PARAM) {
-            return getTraceParameter(request);
+    }
+
+    /**
+     * Determine if the message attribute should be included.
+     *
+     * @param request  the source request
+     * @param produces the media type produced (or {@code MediaType.ALL})
+     * @return if the message attribute should be included
+     */
+    protected boolean isIncludeMessage(HttpServletRequest request, MediaType produces) {
+        switch (getErrorProperties().getIncludeMessage()) {
+            case ALWAYS:
+                return true;
+            case ON_PARAM:
+                return getMessageParameter(request);
+            default:
+                return false;
         }
-        return false;
+    }
+
+    /**
+     * Determine if the errors attribute should be included.
+     *
+     * @param request  the source request
+     * @param produces the media type produced (or {@code MediaType.ALL})
+     * @return if the errors attribute should be included
+     */
+    protected boolean isIncludeBindingErrors(HttpServletRequest request, MediaType produces) {
+        switch (getErrorProperties().getIncludeBindingErrors()) {
+            case ALWAYS:
+                return true;
+            case ON_PARAM:
+                return getErrorsParameter(request);
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Provide access to the error properties.
+     *
+     * @return the error properties
+     */
+    protected ErrorProperties getErrorProperties() {
+        return this.errorProperties;
     }
 }

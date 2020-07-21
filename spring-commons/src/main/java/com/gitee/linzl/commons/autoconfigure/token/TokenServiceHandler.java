@@ -35,9 +35,9 @@ public class TokenServiceHandler implements ITokenService {
         this.properties = properties;
         this.pubkey = pubKey;
         this.priKey = priKey;
-        Assert.isNull(this.properties, "配置属性不能为空");
-        Assert.isNull(this.pubkey, "公钥不能为空");
-        Assert.isNull(this.priKey, "私钥不能为空");
+        Assert.notNull(this.properties, "配置属性不能为空");
+        Assert.notNull(this.pubkey, "公钥不能为空");
+        Assert.notNull(this.priKey, "私钥不能为空");
     }
 
     @Override

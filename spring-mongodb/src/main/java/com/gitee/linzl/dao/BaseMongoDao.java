@@ -12,11 +12,11 @@ import org.springframework.data.mongodb.core.mapreduce.GroupByResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.util.Assert;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -83,8 +83,9 @@ public class BaseMongoDao<T, ID> {
     }
 
     public List<T> find(Query query, int page, int pageSize, Sort sort) {
-        Assert.isTrue(page > 0, "页数page必须大于0");
-        Assert.isTrue(pageSize > 0, "每页大小pageSize必须大于0");
+        if (page <= 0 || pageSize <= 0) {
+            return Collections.emptyList();
+        }
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         query = query.with(pageable);
         if (Objects.nonNull(sort)) {
