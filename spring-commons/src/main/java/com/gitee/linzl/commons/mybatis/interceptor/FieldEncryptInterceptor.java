@@ -33,6 +33,12 @@ import java.util.stream.Collectors;
 })
 @SuppressWarnings("unchecked")
 @Slf4j
+/**
+ * 借鉴参考mybatis-cipher，地址git@gitee.com:Jerry.hu/mybatis-cipher.git
+ *
+ * @author linzhenlie-jk
+ * @date 2020/7/22
+ */
 public class FieldEncryptInterceptor implements Interceptor {
     private static final int MAPPED_STATEMENT_INDEX = 0;
     private static final int PARAMETER_INDEX = 1;
