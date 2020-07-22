@@ -50,6 +50,8 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- 可以自己手动添加additional-spring-configuration-metadata.json, 它的格式和spring-configuration-metadata.json一致,两个json的groups要一致 -->
+        <!-- 打包，自动生成spring-configuration-metadata.json -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -61,52 +63,6 @@
         </dependency>
     </dependencies>
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <!-- 只有在使用springboot启动类下打包使用，普通Jar不能使用 -->
-                    <!-- 所以此plugin插件，按需放在打成springboot jar的pom下 -->
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>build-info</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${javadoc.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <configuration>
-                        <encoding>utf-8</encoding>
-                        <!-- 需要加入，因为maven默认的是${},而springbooot 默认会把此替换成@{} -->
-                        <useDefaultDelimiters>true</useDefaultDelimiters>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <!-- 如果mapper.xml是放在src/main/java目录下，需配置以下 -->
         <!-- 各个项目自己去配置 -->
         <resources>
