@@ -26,12 +26,12 @@ public class RabbitMqOriginal {
 
 		// set up the queue, exchange, binding on the broker
 		RabbitAdmin admin = new RabbitAdmin(cf);
+		TopicExchange exchange = new TopicExchange("myExchange");
+		admin.declareExchange(exchange);
+
 		// 可以设置死信参数，消费消息失败时，进入死信队列
 		Queue queue = new Queue("myQueue", true, true, false, null);
 		admin.declareQueue(queue);
-
-		TopicExchange exchange = new TopicExchange("myExchange");
-		admin.declareExchange(exchange);
 		admin.declareBinding(BindingBuilder.bind(queue).to(exchange).with("foo.*"));
 
 		// set up the listener and container
