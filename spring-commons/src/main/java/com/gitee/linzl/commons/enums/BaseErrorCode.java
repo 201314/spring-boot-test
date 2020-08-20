@@ -4,7 +4,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 参考https://docs.open.alipay.com/common/105806
@@ -26,7 +25,10 @@ public enum BaseErrorCode implements IBaseErrorCode {
     // 非法请求
     NOT_FOUND_URL("2001", "非法请求", "not found url"),
     // 非法操作,进行黑客入侵方式的尝试
-    ILLEGAL_OPERATION("2002","非法操作", "illegal operation"),
+    ILLEGAL_OPERATION("2002", "非法操作", "illegal operation"),
+
+    BAD_REQUEST("2003", "非法请求", "Bad request"),
+    UNSUPPORTED_MEDIA_TYPE("2004", "不支持的媒体类型", "Http status 415, Unsupported Media Type!"),
 
     // 缺少参数
     MISSING_PARAMETERS("4001", "缺少参数", "missing parameters"),
@@ -58,11 +60,11 @@ public enum BaseErrorCode implements IBaseErrorCode {
     }
 
     public static IBaseErrorCode fromCode(String reqCode) {
-        if(StringUtils.isEmpty(reqCode)){
+        if (StringUtils.isEmpty(reqCode)) {
             return BaseErrorCode.SYS_ERROR;
         }
         IBaseErrorCode filerCode =
-                Arrays.stream(AccountErrorCode.values()).filter(accountErrorCode -> Objects.equals(accountErrorCode.getCode(),reqCode)).findFirst().orElse(null);
+                Arrays.stream(AccountErrorCode.values()).filter(accountErrorCode -> Objects.equals(accountErrorCode.getCode(), reqCode)).findFirst().orElse(null);
         return filerCode;
     }
 
