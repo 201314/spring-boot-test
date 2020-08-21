@@ -37,6 +37,7 @@
         <module>spring-quartz-batch</module>
         <module>spring-message</module>
         <module>spring-mybatis-code-generator</module>
+        <module>spring-features-test</module>
     </modules>
 
     <dependencies>
