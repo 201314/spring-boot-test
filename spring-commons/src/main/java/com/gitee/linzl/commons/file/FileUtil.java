@@ -12,8 +12,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * 下载文件的@see
- * com.gitee.linzl.commons.tools.ServletUtil#download(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String, com.gitee.linzl.commons.tools.ServletUtil.OpenTypeEnum)
+ * 下载文件的
+ * @see com.gitee.linzl.commons.tools.ServletUtil#download(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String, com.gitee.linzl.commons.tools.ServletUtil.OpenTypeEnum)
  */
 public class FileUtil {
     /**
