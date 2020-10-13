@@ -1,6 +1,9 @@
 package com.gitee.linzl;
 
-import org.springframework.context.annotation.Import;
+import com.gitee.linzl.commons.annotation.IgnoreScan;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
 import java.lang.annotation.*;
 
@@ -13,7 +16,12 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(SpringCommons.class)
+//@Import(SpringCommons.class)
+@SpringBootApplication
+@ComponentScan(
+        basePackageClasses = SpringCommons.class,
+        excludeFilters = {
+                @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = IgnoreScan.class)})
 public @interface EnableAutoCommons {
 
 }
