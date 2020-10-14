@@ -1,5 +1,6 @@
 package com.gitee.linzl.configuration;
 
+import com.gitee.linzl.domain.UserDomain;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,7 @@ public class CarMoreConstuct {
     private String brand;
     private double price;
 
-    public CarMoreConstuct(@Qualifier("user") @Autowired User user) {
+    public CarMoreConstuct(@Qualifier("userDomain") @Autowired UserDomain user) {
         log.debug("默认1个参，user:{}", user);
     }
-
 }

@@ -1,4 +1,4 @@
-package com.gitee.linzl.configuration;
+package com.gitee.linzl.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +9,10 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class ComponentTest2 {
+public class ComponentDomain {
     private String name;
 
     private String address;
+
+    private ComponentDomain2 test2;
 }

@@ -1,4 +1,4 @@
-package com.gitee.linzl.configuration;
+package com.gitee.linzl.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class ConfigurationTest2 {
+public class ConfigurationDomain2 {
     private String name;
 
     private String address;

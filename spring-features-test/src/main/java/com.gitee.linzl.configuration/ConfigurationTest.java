@@ -1,18 +1,28 @@
 package com.gitee.linzl.configuration;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.gitee.linzl.domain.ConfigurationDomain;
+import com.gitee.linzl.domain.ConfigurationDomain2;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-/**
- * @author linzhenlie-jk
- * @date 2020/8/3
- */
-@Setter
-@Getter
+@Configuration
 public class ConfigurationTest {
-    private String name;
 
-    private String address;
+    @Bean
+    public ConfigurationDomain driver() {
+        ConfigurationDomain driver = new ConfigurationDomain();
+        driver.setName("driver");
+        driver.setName("driver地址");
+        // 级联依赖
+        driver.setTest2(car());
+        return driver;
+    }
 
-    private ConfigurationTest2 test2;
+    @Bean("car2")
+    public ConfigurationDomain2 car() {
+        ConfigurationDomain2 car = new ConfigurationDomain2();
+        car.setName("car");
+        car.setAddress("car地址");
+        return car;
+    }
 }

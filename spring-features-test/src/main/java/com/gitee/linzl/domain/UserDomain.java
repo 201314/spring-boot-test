@@ -1,17 +1,14 @@
-package com.gitee.linzl.configuration;
+package com.gitee.linzl.domain;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.stereotype.Component;
 
-/**
- * Created by jetty on 18/1/31.
- */
 @Component
 @Setter
 @Getter
-public class User implements BeanNameAware {
+public class UserDomain implements BeanNameAware {
 
     private String id;
 

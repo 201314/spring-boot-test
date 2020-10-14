@@ -1,5 +1,9 @@
 package com.gitee.linzl.configuration;
 
+import com.gitee.linzl.domain.ComponentDomain;
+import com.gitee.linzl.domain.ComponentDomain2;
+import com.gitee.linzl.domain.ConfigurationDomain;
+import com.gitee.linzl.domain.ConfigurationDomain2;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +15,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class TestApplicationTests {
 
     @Autowired
-    private ConfigurationTest car;
+    private ConfigurationDomain car;
 
     @Autowired
-    private ConfigurationTest2 driver;
+    private ConfigurationDomain2 driver;
 
     @Test
     public void contextLoads() {
@@ -23,10 +27,10 @@ public class TestApplicationTests {
     }
 
     @Autowired
-    private ComponentTest test;
+    private ComponentDomain test;
 
     @Autowired
-    private ComponentTest2 test2;
+    private ComponentDomain2 test2;
 
     @Test
     public void contextLoads2() {

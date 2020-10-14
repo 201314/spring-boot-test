@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <description>Spring特性使用</description>
-    <artifactId>test</artifactId>
+    <artifactId>spring-feature-test</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

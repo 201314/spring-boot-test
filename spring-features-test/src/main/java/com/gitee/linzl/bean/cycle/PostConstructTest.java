@@ -1,4 +1,4 @@
-package com.gitee.linzl.configuration;
+package com.gitee.linzl.bean.cycle;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

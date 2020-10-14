@@ -1,4 +1,4 @@
-package com.gitee.linzl.configuration;
+package com.gitee.linzl.bean.processor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -15,7 +15,7 @@ public class InstantiationTracingBeanPostProcessor implements BeanPostProcessor 
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
-        log.debug("======================Bean '" + beanName + "' created : " + bean.toString());
+        //log.debug("======================Bean '" + beanName + "' created : " + bean.toString());
         return bean;
     }
 }
