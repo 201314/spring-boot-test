@@ -1,5 +1,12 @@
 package com.gitee.linzl;
 
+import com.gitee.linzl.commons.annotation.IgnoreScan;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
+
+import java.lang.annotation.*;
+
 /**
  * 导入spring-common
  * <p>
@@ -10,6 +17,14 @@ package com.gitee.linzl;
  * @author linzhenlie
  * @date 2019/8/29
  */
-public class SpringCommons {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@Configuration
+@ComponentScan(
+        excludeFilters = {
+                @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = IgnoreScan.class)})
+public @interface SpringCommons {
 
 }

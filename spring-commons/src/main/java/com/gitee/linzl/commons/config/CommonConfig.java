@@ -3,21 +3,15 @@ package com.gitee.linzl.commons.config;
 import com.alibaba.fastjson.serializer.*;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gitee.linzl.commons.constants.GlobalConstants;
 import com.gitee.linzl.commons.fileupload.CustomMultipartResolver;
 import com.gitee.linzl.commons.interceptor.DefaultPermissionTokenInterceptor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.*;
@@ -43,11 +37,13 @@ import java.util.List;
 @Configuration
 @Slf4j
 public class CommonConfig implements WebMvcConfigurer {
+    private static final boolean jackSonPresent;
     private static final boolean fastJsonPresent;
 
     static {
         ClassLoader classLoader = WebMvcConfigurationSupport.class.getClassLoader();
         fastJsonPresent = ClassUtils.isPresent("com.alibaba.fastjson.JSON", classLoader);
+        jackSonPresent = ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader);
     }
 
     /**
@@ -56,6 +52,11 @@ public class CommonConfig implements WebMvcConfigurer {
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         log.debug("extendMessageConverters========>extendMessageConverters");
+        if (jackSonPresent) {
+            //如果有JackSon,优先使用
+            return;
+        }
+
         if (fastJsonPresent) {
             FastJsonHttpMessageConverter jsonConverter = new FastJsonHttpMessageConverter();
             FastJsonConfig fastJsonConfig = new FastJsonConfig();
@@ -87,16 +88,6 @@ public class CommonConfig implements WebMvcConfigurer {
             converters.add(0, jsonConverter);
             if (log.isDebugEnabled()) {
                 log.debug("初始化fastjson,默认时间格式yyyy-MM-dd HH:mm:ss");
-            }
-        } else {
-            Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-            builder.serializationInclusion(JsonInclude.Include.NON_NULL);
-            // 忽略 transient 修饰的属性
-            builder.featuresToEnable(MapperFeature.PROPAGATE_TRANSIENT_MARKER);
-            ObjectMapper objectMapper = builder.build();
-            converters.add(0, new MappingJackson2HttpMessageConverter(objectMapper));
-            if (log.isDebugEnabled()) {
-                log.debug("初始化JackSon,默认时间格式为long");
             }
         }
     }
