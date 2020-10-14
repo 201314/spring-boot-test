@@ -1,8 +1,7 @@
 package com.gitee.linzl.dao;
 
 import com.gitee.linzl.entity.UserEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import com.gitee.linzl.mongo.BaseMongoDao;
 import org.springframework.stereotype.Service;
 
 /**

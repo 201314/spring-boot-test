@@ -2,26 +2,21 @@ package com.baomidou.springboot;
 
 import com.gitee.linzl.EnableAutoCommons;
 import com.gitee.linzl.commons.filter.gzip.GzipFilter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.interceptor.CustomizableTraceInterceptor;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.boot.Banner;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-@SpringBootApplication
 @EnableAspectJAutoProxy
 @EnableAutoCommons
-//@ComponentScan(basePackages = {"com.baomidou.springboot", "com.gitee.linzl"})
-// @EnableDiscoveryClient
 // 继承SpringBootServletInitializer，则可打包成war部署在外置tomcat下
 // 否则只能通过 java -jar 命令启动
-@Slf4j
 public class SpringAopBootstrap { // extends SpringBootServletInitializer {
     // @Override
     // protected SpringApplicationBuilder configure(SpringApplicationBuilder
@@ -33,7 +28,10 @@ public class SpringAopBootstrap { // extends SpringBootServletInitializer {
         SpringApplicationBuilder app = new SpringApplicationBuilder(SpringAopBootstrap.class);
         app.bannerMode(Banner.Mode.OFF);
         app.properties(new String[]{});
-        app.run(args);
+        ConfigurableApplicationContext context = app.run(args);
+        for (String beanDefinitionName : context.getBeanDefinitionNames()) {
+            System.out.println(beanDefinitionName + "==>" + context.getBean(beanDefinitionName));
+        }
     }
 
     @Bean

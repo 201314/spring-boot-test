@@ -18,12 +18,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/user")
-@RequiredPermissionToken
 public class UserRest {
     /**
      * 分页 PAGE
