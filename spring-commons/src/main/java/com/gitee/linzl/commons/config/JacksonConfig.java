@@ -1,10 +1,8 @@
 package com.gitee.linzl.commons.config;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -16,6 +14,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 /**
  * Jackson支持LocalDateTime,LocalDate返回时间戳，默认时间返回给前端统一为时间戳
@@ -47,7 +47,6 @@ public class JacksonConfig {
     }
 
     @Bean
-    @ConditionalOnClass(Jackson2ObjectMapperBuilder.class)
     public Jackson2ObjectMapperBuilderCustomizer customJackson() {
         return builder -> {
             //若POJO对象的属性值为null，序列化时不进行显示
@@ -55,6 +54,8 @@ public class JacksonConfig {
             // 忽略 transient 修饰的属性
             builder.featuresToEnable(MapperFeature.PROPAGATE_TRANSIENT_MARKER);
             builder.featuresToEnable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            builder.featuresToEnable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS);
+            builder.timeZone(TimeZone.getTimeZone("GMT+8"));
         };
     }
 }
