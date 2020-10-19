@@ -1,13 +1,14 @@
 package com.baomidou.springboot.entity;
 
-import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import lombok.Getter;
-import lombok.Setter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 用户表
@@ -26,6 +27,9 @@ public class User {
 	private Integer testType;
 
 	private Date testDate;
+
+	private LocalDateTime localDateTime;
+	private LocalDate localDate;
 
 	private Long role;
 
