@@ -3,7 +3,6 @@ package com.gitee.linzl.commons.tools;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
  * <p>
  * 2016年11月25日
  */
-@Component
 public class MessageSourceUtil implements MessageSourceAware {
 
     private static MessageSource messageSource;

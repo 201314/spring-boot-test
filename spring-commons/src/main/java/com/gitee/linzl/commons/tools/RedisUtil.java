@@ -1,18 +1,6 @@
 package com.gitee.linzl.commons.tools;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.Cursor;
@@ -21,7 +9,13 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.TimeoutUtils;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 
-import com.alibaba.fastjson.JSON;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Redis工具类
@@ -1329,11 +1323,12 @@ public class RedisUtil {
         return stringRedisTemplate.opsForZSet().reverseRange(key, start, end);
     }
 
-	/**
-	 * 获取集合所有元素，从大到小排序
-	 * @param key
-	 * @return
-	 */
+    /**
+     * 获取集合所有元素，从大到小排序
+     *
+     * @param key
+     * @return
+     */
     public Set<String> zReverseRangeAll(String key) {
         return zReverseRange(key, 0, -1);
     }
