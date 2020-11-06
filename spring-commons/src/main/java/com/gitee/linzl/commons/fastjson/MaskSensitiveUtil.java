@@ -78,7 +78,7 @@ public class MaskSensitiveUtil {
         if (StringUtils.isBlank(address)) {
             return "";
         }
-        final int length = StringUtils.length(address);
+        int length = StringUtils.length(address);
         return StringUtils.rightPad(StringUtils.left(address, length - sensitiveSize), length, maskSymbol);
     }
 
@@ -89,7 +89,7 @@ public class MaskSensitiveUtil {
         if (StringUtils.isBlank(email)) {
             return "";
         }
-        final int index = StringUtils.indexOf(email, "@");
+        int index = StringUtils.indexOf(email, "@");
         if (index <= 1) {
             return email;
         }

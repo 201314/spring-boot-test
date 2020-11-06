@@ -1,33 +1,31 @@
 package com.gitee.linzl.commons.fastjson;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * @author linzhenlie
  * @date 2019/10/8
  */
-@Target(ElementType.FIELD)
+@Documented
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MaskSensitiveField {
     /**
-     * 保留左边几位
+     * 保留左边几位,必须是正整数
      *
      * @return
      */
     int left() default 0;
 
     /**
-     * 保留右边几位
+     * 保留右边几位,必须是正整数
      *
      * @return
      */
     int right() default 0;
 
     /**
-     * 保留最大长度
+     * 保留最大长度,必须是正整数
      *
      * @return
      */

@@ -75,11 +75,16 @@ public class MaskValueFilter implements ValueFilter {
         return value;
     }
 
-    private String replace(String columnVal, int left, int right, String padding) {
+    private static String replace(String columnVal, int left, int right, String padding) {
         if (left > 0 || right > 0) {
-            return StringUtils.rightPad(StringUtils.left(columnVal, left), StringUtils.length(columnVal), padding)
+            return StringUtils.rightPad(StringUtils.left(columnVal, left), StringUtils.length(columnVal) - right, padding)
                     .concat(StringUtils.right(columnVal, right));
         }
         return columnVal;
+    }
+
+    public static void main(String[] args) {
+        String str = "138****1234";
+        System.out.println(replace(str,3,4,"*"));
     }
 }
