@@ -55,6 +55,8 @@ public class JacksonConfig {
             builder.featuresToEnable(MapperFeature.PROPAGATE_TRANSIENT_MARKER);
             builder.featuresToEnable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             builder.featuresToEnable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS);
+            // JackSon,Object必须要有字段，否则报错FAIL_ON_EMPTY_BEANS
+            builder.featuresToDisable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
             builder.timeZone(TimeZone.getTimeZone("GMT+8"));
         };
     }
