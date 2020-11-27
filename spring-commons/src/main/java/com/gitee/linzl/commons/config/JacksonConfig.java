@@ -57,6 +57,7 @@ public class JacksonConfig {
             builder.featuresToEnable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS);
             // POJO对象必须要有字段，否则Jackson报错FAIL_ON_EMPTY_BEANS
             builder.featuresToDisable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+            builder.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
             builder.timeZone(TimeZone.getTimeZone("GMT+8"));
         };
     }

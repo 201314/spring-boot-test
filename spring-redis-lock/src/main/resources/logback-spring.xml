@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<jmxConfigurator />
+	<!-- 在spring-boot-版本.jar 如果使用以下include,默认配置了Console输出 -->
+	<!-- <include resource="org/springframework/boot/logging/logback/base.xml" 
+		/> -->
+
+	<!--设置上下文名称,用于区分不同应用程序的记录。一旦设置不能修改, 可以通过%contextName来打印日志上下文名称 -->
+	<contextName>spring-log-aop</contextName>
+	<!--application.yml 传递参数，不能使用logback 自带的<property>标签 -->
+	<springProperty scope="context" name="appname"
+		source="spring.application.name" defaultValue="spring-redis-lock" />
+	<property name="log.path" value="./logs" />
+
+	<!--输出到控制台 ConsoleAppender 不配置root采用默认console输出 -->
+	<appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>
+				<pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level
+					%logger{36}-%msg%n</pattern>
+			</pattern>
+		</layout>
+	</appender>
+
+	<!--输出到文件 RollingFileAppender -->
+	<appender name="fileDebugLog"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.path}/${appname}.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/${appname}.%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<!-- 单个日志文件最多 1000MB, 30天的日志周期，最大不能超过20GB -->
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>1000MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>20GB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %line-%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!--输出到文件 RollingFileAppender error信息单独归档 -->
+	<appender name="fileErrorLog"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--过滤日志，仅记录error日志 -->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>Error</level>
+		</filter>
+		<File>${log.path}/${appname}.error.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/${appname}.error.%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<!-- 单个日志文件最多 1000MB, 30天的日志周期，最大不能超过20GB -->
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>1000MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>20GB</totalSizeCap>
+		</rollingPolicy>
+		<!--日志输出编码格式化 -->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %line -
+				%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.gitee.log" level="DEBUG" />
+	<logger name="com.gitee.linzl" level="DEBUG" />
+	<logger name="com.baomidou" level="DEBUG" />
+
+	<root level="info">
+		<appender-ref ref="consoleLog" />
+		<appender-ref ref="fileDebugLog" />
+		<appender-ref ref="fileErrorLog" />
+	</root>
+</configuration>

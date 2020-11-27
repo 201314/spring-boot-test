@@ -1,34 +1,24 @@
 package com.gitee.linzl;
 
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.geo.Circle;
-import org.springframework.data.geo.Distance;
-import org.springframework.data.geo.GeoResult;
-import org.springframework.data.geo.GeoResults;
-import org.springframework.data.geo.Point;
+import org.springframework.data.geo.*;
 import org.springframework.data.redis.connection.RedisGeoCommands.DistanceUnit;
 import org.springframework.data.redis.connection.RedisGeoCommands.GeoLocation;
 import org.springframework.data.redis.connection.RedisGeoCommands.GeoRadiusCommandArgs;
-import org.springframework.data.redis.core.GeoOperations;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import lombok.extern.slf4j.Slf4j;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 //@AutoConfigureMockMvc // 如果有servlet则需要添加此注解
 @RunWith(SpringRunner.class)
@@ -305,14 +295,24 @@ public class RedisTest {
 
     @Test
     public void testList() {
-        List<String> list = new ArrayList<>();
-        list.add("0");
-        list.add("1");
-        list.add("2");
-        list.add("3");
-        list.add("4");
-        list.add("5");
-        System.out.println("===>" + list.subList(0, 5));
+        redisTemplate.opsForValue().set("age:hello",new Student(11,"是我"));
+        redisTemplate.opsForValue().set("age:hello1","是我");
+
+        HashOperations<String, Object, Object> ops = redisTemplate.opsForHash();
+        String key = "age:hello2";
+        ops.put(key, "name", "是我");
+        ops.put(key, "sex", "boy");
     }
 
+    @Data
+    private static class Student {
+        private Integer age;
+        private String name;
+
+        public Student(Integer age, String name) {
+            this.age = age;
+            this.name = name;
+
+        }
+    }
 }
