@@ -302,6 +302,9 @@ public class RedisTest {
         String key = "age:hello2";
         ops.put(key, "name", "是我");
         ops.put(key, "sex", "boy");
+
+        System.out.println("name:" + ops.get(key,"name"));
+        System.out.println("age:hello:" + redisTemplate.opsForValue().get("age:hello"));
     }
 
     @Data
