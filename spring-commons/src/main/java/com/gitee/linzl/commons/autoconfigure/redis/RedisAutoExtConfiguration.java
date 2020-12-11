@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -16,7 +17,7 @@ import java.net.UnknownHostException;
  * @See org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
  */
 @Component
-@ConditionalOnClass(ObjectMapper.class)
+@ConditionalOnClass({RedisOperations.class, ObjectMapper.class})
 @Slf4j
 public class RedisAutoExtConfiguration {
 
