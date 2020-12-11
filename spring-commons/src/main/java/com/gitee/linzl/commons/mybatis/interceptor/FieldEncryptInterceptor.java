@@ -3,6 +3,7 @@ package com.gitee.linzl.commons.mybatis.interceptor;
 import com.gitee.linzl.commons.mybatis.annotation.Encrypted;
 import com.gitee.linzl.commons.mybatis.service.CryptService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
@@ -74,7 +75,9 @@ public class FieldEncryptInterceptor implements Interceptor {
         Object[] args = invocation.getArgs();
         Object parameter = args[PARAMETER_INDEX];
         MappedStatement ms = (MappedStatement) args[MAPPED_STATEMENT_INDEX];
-        log.info("入参:【{}】", parameter);
+        BoundSql boundSql = ms.getBoundSql(parameter);
+        log.info("入参parameter:【{}】", ms.getParameterMap());
+        log.info("入参boundSql:【{}】", SqlSourceBuilder.removeExtraWhitespaces(boundSql.getSql()));
         SqlCommandType sqlCommandType = ms.getSqlCommandType();
         if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
             updateParameters(parameter);

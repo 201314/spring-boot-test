@@ -3,7 +3,7 @@ package com.gitee.linzl.commons.annotation;
 import java.lang.annotation.*;
 
 /**
- * 需要有token权限才能访问
+ * 标记在Controller，表示需要有token权限才能访问
  * <p>
  * 因为注解可用于类级别，所以AOP不适合，AOP适用于方法级别
  *
