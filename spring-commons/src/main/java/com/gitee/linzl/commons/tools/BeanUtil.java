@@ -2,6 +2,7 @@ package com.gitee.linzl.commons.tools;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,13 +15,16 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
+@Slf4j
 public class BeanUtil {
-
     /**
      * 把source复制到target,复制相同属性名称,注意属性类型也要一致
      *
@@ -187,5 +191,98 @@ public class BeanUtil {
             }
         }
         return returnMap;
+    }
+
+
+    /**
+     * 获取更新操作的change item
+     *
+     * @param oldObj
+     * @param newObj
+     * @return
+     */
+    public static List<CompareResult> compare(Object oldObj, Object newObj) {
+        Class oldCls = oldObj.getClass();
+        Class newCls = newObj.getClass();
+        if (isBaseDataType(oldCls) || isBaseDataType(newCls)) {
+            log.error("所比较的两个类属性及值不能比较");
+            return null;
+        }
+        List<CompareResult> changeItems = new ArrayList<>();
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(oldCls, Object.class);
+
+            for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+                String field = propertyDescriptor.getName();
+                // 获取字段旧值
+                String oldProp = getValue(propertyDescriptor.getReadMethod().invoke(oldObj));
+                // 获取字段新值
+                String newProp = getValue(propertyDescriptor.getReadMethod().invoke(newObj));
+
+                // 对比新旧值
+                if (!oldProp.equals(newProp)) {
+                    CompareResult changeItem = new CompareResult();
+                    changeItem.setField(field);
+                    changeItem.setNewValue(newProp);
+                    changeItem.setOldValue(oldProp);
+                    changeItems.add(changeItem);
+                }
+            }
+        } catch (Exception e) {
+            log.error("There is error when convert change item", e);
+        }
+        return changeItems;
+    }
+
+    /**
+     * 不同类型转字符串的处理
+     *
+     * @param obj
+     * @return
+     */
+    public static String getValue(Object obj) {
+        if (Objects.isNull(obj)) {
+            return "";
+        }
+
+        if (obj instanceof Date) {
+            return formatDateW3C((Date) obj);
+        }
+        return obj.toString();
+    }
+
+    /**
+     * 将date类型转为字符串形式
+     *
+     * @param date
+     * @return
+     */
+    public static String formatDateW3C(Date date) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        String text = df.format(date);
+        return text;
+    }
+
+    /**
+     * 判断一个类是否为基本数据类型或包装类，或日期。
+     *
+     * @param clazz 要判断的类。
+     * @return true 表示为基本数据类型。
+     */
+    public static boolean isBaseDataType(Object obj) {
+        Class clazz = obj.getClass();
+        return (obj instanceof Character || clazz.equals(Character.class)) ||
+                (obj instanceof Byte || clazz.equals(Byte.class)) ||
+                (obj instanceof Boolean || clazz.equals(Boolean.class)) ||
+                (obj instanceof Short || clazz.equals(Short.class)) ||
+                (obj instanceof Integer || clazz.equals(Integer.class)) ||
+                (obj instanceof Long || clazz.equals(Long.class)) ||
+                (obj instanceof Float || clazz.equals(Float.class)) ||
+                (obj instanceof Double || clazz.equals(Double.class)) ||
+                (obj instanceof String || clazz.equals(String.class)) ||
+                (obj instanceof BigDecimal || clazz.equals(BigDecimal.class)) ||
+                (obj instanceof BigInteger || clazz.equals(BigInteger.class)) ||
+                (obj instanceof Date || clazz.equals(Date.class)) ||
+                clazz.isPrimitive();
     }
 }

@@ -1,14 +1,12 @@
-package com.gitee.log.aop.entity;
+package com.gitee.linzl.commons.tools;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class ChangeItem {
+public class CompareResult {
 	private String field;
-
-	private String fieldShowName;
 
 	private String oldValue;
 

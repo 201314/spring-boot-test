@@ -2,6 +2,7 @@ package com.gitee.linzl.commons.tools;
 
 import com.gitee.linzl.commons.enums.IBaseErrorCode;
 import com.gitee.linzl.commons.exception.BusinessException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -18,6 +19,7 @@ import java.util.Objects;
  * @author linzhenlie
  * @date 2020/7/21
  */
+@Slf4j
 public abstract class AssertUtil {
     /**
      * Assert a boolean expression, throwing an {@code IllegalStateException}
