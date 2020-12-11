@@ -195,7 +195,7 @@ public class BeanUtil {
 
 
     /**
-     * 获取更新操作的change item
+     * 比较两个bean之间的差异
      *
      * @param oldObj
      * @param newObj
