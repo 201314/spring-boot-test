@@ -32,18 +32,17 @@ import com.gitee.log.aop.util.DiffUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
-// @Aspect
+@Aspect
 @Component
 @Slf4j
 public class OperationLogAspect {
-	@Autowired
-	private OperationLogDao actionDao;
 	@Autowired
 	private SqlSession sqlSession;
 	@Autowired
 	private MybatisPlusProperties properties;
 
-	@Pointcut("execution(* com.gitee.log.aop.dao.*.insert*(..)) " + "|| execution(* com.gitee.log.aop.dao.*.save*(..)) "
+	@Pointcut("execution(* com.gitee.log.aop.dao.*.insert*(..)) "
+			+ "|| execution(* com.gitee.log.aop.dao.*.save*(..)) "
 			+ "|| execution(* com.gitee.log.aop.dao.*.update*(..))")
 	public void save() {
 		log.debug("save切面");
@@ -103,6 +102,7 @@ public class OperationLogAspect {
 				action.setObjectClass(obj.getClass().getName());
 
 			} else if (method.startsWith("update")) {
+				// 暂时不支持update
 				actionType = OperationType.UPDATE;
 				requestId = PropertyUtils.getProperty(obj, getPKField(obj.getClass()));
 				id = Long.valueOf(requestId.toString());
@@ -116,18 +116,12 @@ public class OperationLogAspect {
 
 				Class<?> mapper = msig.getMethod().getDeclaringClass();
 				Object target = pjp.getTarget();
-				Object proxy = sqlSession.getMapper(msig.getMethod().getDeclaringClass());
-				System.out.println("properties==="
-						+ properties.getConfiguration().getMapperRegistry().getMapper(mapper, sqlSession));
-				System.out.println("mapper==" + mapper);
-				System.out.println("proxy==" + proxy);
-				System.out.println("target==" + target);
 
-				MybatisMapperProxy mybatisProxy = (MybatisMapperProxy) proxy;
+				MybatisMapperProxy mybatisProxy = (MybatisMapperProxy) pjp.getTarget();
 
 				Method findMethod = msig.getMethod().getDeclaringClass().getMethod("selectById", Long.class);
 				System.out.println("查询结果：" + mybatisProxy.invoke(mybatisProxy, findMethod, new Object[] { id }));
-				oldObj = DiffUtil.getObjectById(proxy, mapper, id);
+				oldObj = DiffUtil.getObjectById(null, mapper, id);
 				action.setObjectClass(oldObj.getClass().getName());
 
 			} else if (method.startsWith("delete") || method.startsWith("remove")) {
@@ -174,8 +168,7 @@ public class OperationLogAspect {
 			action.setOperator("admin"); // dynamic get from threadlocal/session
 			action.setOperateTime(new Date());
 
-			log.debug("输出操作:【{}】", JSON.toJSONString(action));
-			// actionDao.save(action);
+			log.debug("保存操作结果:【{}】", JSON.toJSONString(action));
 		} catch (Exception e) {
 			log.error("异常:", e);
 		}

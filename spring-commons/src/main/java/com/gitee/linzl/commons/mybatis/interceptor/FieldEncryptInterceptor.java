@@ -74,7 +74,7 @@ public class FieldEncryptInterceptor implements Interceptor {
         Object[] args = invocation.getArgs();
         Object parameter = args[PARAMETER_INDEX];
         MappedStatement ms = (MappedStatement) args[MAPPED_STATEMENT_INDEX];
-
+        log.info("入参:【{}】", parameter);
         SqlCommandType sqlCommandType = ms.getSqlCommandType();
         if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
             updateParameters(parameter);
@@ -84,7 +84,7 @@ public class FieldEncryptInterceptor implements Interceptor {
 
         // 解密数据
         if (SqlCommandType.SELECT.equals(sqlCommandType)) {
-            return crypt(object, true);
+            return crypt(object, false);
         }
         return object;
     }
@@ -96,10 +96,10 @@ public class FieldEncryptInterceptor implements Interceptor {
         if (parameter instanceof Map) {
             Map<String, Object> map = getParameterMap(parameter);
             map.forEach((k, val) -> {
-                crypt(val, false);
+                crypt(val, true);
             });
         } else {
-            crypt(parameter, false);
+            crypt(parameter, true);
         }
     }
 

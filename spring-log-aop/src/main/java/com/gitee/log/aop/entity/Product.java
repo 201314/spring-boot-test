@@ -3,6 +3,7 @@ package com.gitee.log.aop.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gitee.linzl.commons.api.BaseEntity;
+import com.gitee.linzl.commons.mybatis.annotation.Encrypted;
 import com.gitee.log.aop.datalog.OperationLog;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +21,10 @@ public class Product extends BaseEntity {
 
     @OperationLog(name = "产品名称")
     @NotNull
+    @Encrypted
     private String name;
+    private String nameMd5x;
+    private String nameEncrypt;
 
     private String category;
 
@@ -28,11 +32,5 @@ public class Product extends BaseEntity {
 
     private BigDecimal buyPrice;
 
-    private BigDecimal sellPrice;
-
-    private String provider;
-
     private Date onlineTime;
-
-    private Date updateTime;
 }

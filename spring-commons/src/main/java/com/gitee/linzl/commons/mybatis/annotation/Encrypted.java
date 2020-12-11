@@ -1,5 +1,7 @@
 package com.gitee.linzl.commons.mybatis.annotation;
 
+import org.springframework.data.annotation.Transient;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,6 +27,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD})
+@Transient
 public @interface Encrypted {
 
 }

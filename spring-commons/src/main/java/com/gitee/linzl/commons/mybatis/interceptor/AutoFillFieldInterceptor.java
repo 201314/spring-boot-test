@@ -40,7 +40,6 @@ public class AutoFillFieldInterceptor implements Interceptor {
         Object parameter = args[PARAMETER_INDEX];
         MappedStatement ms = (MappedStatement) args[MAPPED_STATEMENT_INDEX];
         SqlCommandType sqlCommandType = ms.getSqlCommandType();
-        log.info("parameter类型:【{}】", parameter.getClass());
         log.info("parameter值:【{}】", parameter);
 
         /**
@@ -63,7 +62,6 @@ public class AutoFillFieldInterceptor implements Interceptor {
                     process(value, sqlCommandType);
                 }
             } else {
-                log.info("啥都不用");
                 process(parameter, sqlCommandType);
             }
         }
@@ -72,22 +70,18 @@ public class AutoFillFieldInterceptor implements Interceptor {
 
     private void process(Object parameter, SqlCommandType sqlCommandType) {
         if (parameter instanceof List) {
-            log.info("List");
             ((List) parameter).stream().forEach(param -> {
                 fillField(param, sqlCommandType);
             });
         } else if (parameter instanceof Collection) {
-            log.info("Collection");
             ((Collection) parameter).stream().forEach(param -> {
                 fillField(param, sqlCommandType);
             });
         } else if (parameter.getClass().isArray()) {
-            log.info("Array");
             Arrays.asList((Object[]) parameter).stream().forEach(param -> {
                 fillField(param, sqlCommandType);
             });
         } else {
-            log.info("实体");
             fillField(parameter, sqlCommandType);
         }
     }
