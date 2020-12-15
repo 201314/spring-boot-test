@@ -166,7 +166,9 @@ public class FieldEncryptInterceptor implements Interceptor {
                 return;
             }
             ReflectionUtils.makeAccessible(field);
+            // 加密字段的原文置为空
             ReflectionUtils.setField(field, entity, conversionService.convert(value, field.getType()));
+            // ReflectionUtils.setField(field, entity, null);
 
             Field encryptField = ReflectionUtils.findField(entity.getClass(), field.getName() + ENCRYPTX);
             if (Objects.nonNull(encryptField)) {
