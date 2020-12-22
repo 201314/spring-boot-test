@@ -3,8 +3,8 @@ package com.baomidou.springboot.controller;
 import com.baomidou.springboot.entity.User;
 import com.gitee.linzl.commons.annotation.ApiMethod;
 import com.gitee.linzl.commons.annotation.Performance;
-import com.gitee.linzl.commons.annotation.RequiredPermissionToken;
 import com.gitee.linzl.commons.api.ApiResult;
+import com.gitee.linzl.commons.tools.ApiResults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -47,7 +46,7 @@ public class UserRest {
         user.setLocalDateTime(LocalDateTime.now());
         user.setTestType(200);
         user.setMessage(sb.toString());
-        return ApiResult.success(user);
+        return ApiResults.success(user);
     }
 
     @PostMapping("/test2")
@@ -68,7 +67,7 @@ public class UserRest {
         user.setLocalDateTime(LocalDateTime.now());
         user.setTestType(200);
         user.setMessage(sb.toString());
-        return ApiResult.success(user);
+        return ApiResults.success(user);
     }
 
 

@@ -1,13 +1,12 @@
 package com.gitee.linzl.commons.gateway;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.gitee.linzl.commons.api.ApiResult;
+import com.gitee.linzl.commons.tools.ApiResults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import com.gitee.linzl.commons.api.ApiResult;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service("qihoo.sdk.marketing.test")
@@ -16,9 +15,9 @@ public class TestAction extends AbstractBaseAction {
 	public ApiResult<Map> internalHandle(Map requestMap) {
 		log.info("测试action");
 		try {
-			return ApiResult.success(new HashMap<>());
+			return ApiResults.success(new HashMap<>());
 		} catch (Exception e) {
-			return ApiResult.fail();
+			return ApiResults.fail();
 		}
 	}
 }

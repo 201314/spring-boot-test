@@ -1,5 +1,6 @@
 package com.gitee.linzl.commons.exception;
 
+import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.enums.IBaseErrorCode;
 
 /**
@@ -12,5 +13,9 @@ public class BusinessException extends ServiceException {
 
     public BusinessException(IBaseErrorCode errorEnum) {
         super(errorEnum);
+    }
+
+    public BusinessException(ApiResult api) {
+        super(api);
     }
 }

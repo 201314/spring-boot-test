@@ -1,6 +1,7 @@
 package com.gitee.linzl.controller;
 
 import com.gitee.linzl.commons.api.ApiResult;
+import com.gitee.linzl.commons.tools.ApiResults;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
@@ -39,7 +40,7 @@ public class FileController {
     @PostMapping(value = "/upload")
     public Object upload(@RequestParam("file") MultipartFile multipartFile) throws Exception {
         ObjectId id = gridFsTemplate.store(multipartFile.getInputStream(), multipartFile.getName(), multipartFile.getContentType());
-        return ApiResult.success(id);
+        return ApiResults.success(id);
     }
 
     /**
@@ -82,6 +83,6 @@ public class FileController {
         Query query = Query.query(Criteria.where("_id").is(fileId));
         // 删除单个文件
         gridFsTemplate.delete(query);
-        return ApiResult.success();
+        return ApiResults.success();
     }
 }

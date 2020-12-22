@@ -2,6 +2,7 @@ package com.gitee.linzl.commons.aop;
 
 import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.enums.BaseErrorCode;
+import com.gitee.linzl.commons.tools.ApiResults;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -65,7 +66,7 @@ public class ControllerValidatorAspect {
                 log.error("参数校验不通过,字段:【{}】,校验提醒:【{}】,类名:【{}】", fe.getField(), fe.getDefaultMessage(),fe);
             });
         }
-        return new ApiResult(BaseErrorCode.INVALID_PARAMETERS);
+        return ApiResults.fail(BaseErrorCode.INVALID_PARAMETERS);
     }
 
     private void commonColumn(Object retVal, LocalDateTime requestTime) {

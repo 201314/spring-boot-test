@@ -1,5 +1,6 @@
 package com.gitee.linzl.commons.exception;
 
+import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.enums.IBaseErrorCode;
 
 /**
@@ -9,14 +10,12 @@ import com.gitee.linzl.commons.enums.IBaseErrorCode;
  * @date 2019/8/26
  */
 public class ServiceException extends BaseException {
-    private IBaseErrorCode errorEnum;
 
     public ServiceException(IBaseErrorCode errorEnum) {
         super(errorEnum.getCode(), errorEnum.getMsg());
-        this.errorEnum = errorEnum;
     }
 
-    public IBaseErrorCode getErrorEnum() {
-        return errorEnum;
+    public ServiceException(ApiResult api) {
+        super(api.getCode(), api.getMsg());
     }
 }

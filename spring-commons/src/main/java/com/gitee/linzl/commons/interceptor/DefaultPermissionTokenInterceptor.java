@@ -5,6 +5,7 @@ import com.gitee.linzl.commons.annotation.SkipPermissionToken;
 import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.autoconfigure.token.ITokenService;
 import com.gitee.linzl.commons.constants.GlobalConstants;
+import com.gitee.linzl.commons.tools.ApiResults;
 import com.gitee.linzl.commons.tools.ServletUtil;
 import com.gitee.linzl.thread.UserContext;
 import com.gitee.linzl.thread.UserContextHandler;
@@ -80,6 +81,6 @@ public class DefaultPermissionTokenInterceptor extends HandlerInterceptorAdapter
         UserContext context = new UserContext();
         context.setUserNo(userNo);
         UserContextHandler.setContext(context);
-        return ApiResult.success();
+        return ApiResults.success();
     }
 }

@@ -1,12 +1,12 @@
 package com.gitee.linzl.commons.aop;
 
 import com.gitee.linzl.commons.api.ApiResult;
+import com.gitee.linzl.commons.tools.ApiResults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
@@ -30,7 +30,7 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice {
             return body;
         }
         // 如果不是，包装成统一类型，且约定为成功
-        return ApiResult.success(body);
+        return ApiResults.success(body);
     }
 
 }

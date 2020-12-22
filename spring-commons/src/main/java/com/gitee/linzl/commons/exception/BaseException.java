@@ -42,7 +42,7 @@ public class BaseException extends RuntimeException {
      * @param message 默认的信息提醒
      */
     public BaseException(final String code, final String message) {
-        super(message);
+        super("【" + code + "】" + message);
         this.code = code;
         this.message = message;
     }
@@ -86,7 +86,7 @@ public class BaseException extends RuntimeException {
         return this.params;
     }
 
-    protected final String getDefaultMessage() {
+    public final String getDefaultMessage() {
         final Throwable cause = this.getCause();
         if (cause instanceof BaseException) {
             return ((BaseException) cause).getDefaultMessage();

@@ -3,6 +3,7 @@ package com.gitee.springboot.autoconfigure.web.servlet.error;
 import com.gitee.linzl.commons.annotation.IgnoreScan;
 import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.enums.BaseErrorCode;
+import com.gitee.linzl.commons.tools.ApiResults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
@@ -70,9 +71,9 @@ public class BasicErrorControllerExt extends AbstractErrorController {
         ApiResult<Object> rep;
         log.debug("response.getStatus():【{}】", response.getStatus());
         if (response.getStatus() == HttpStatus.NOT_FOUND.value()) {
-            rep = new ApiResult<>(BaseErrorCode.NOT_FOUND_URL);
+            rep = ApiResults.fail(BaseErrorCode.NOT_FOUND_URL);
         } else {
-            rep = new ApiResult<>(BaseErrorCode.MISSING_PARAMETERS);
+            rep = ApiResults.fail(BaseErrorCode.MISSING_PARAMETERS);
         }
         return new ResponseEntity<>(rep, HttpStatus.OK);
     }

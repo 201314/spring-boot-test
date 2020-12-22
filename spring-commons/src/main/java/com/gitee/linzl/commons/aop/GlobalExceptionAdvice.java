@@ -4,6 +4,7 @@ import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.enums.BaseErrorCode;
 import com.gitee.linzl.commons.exception.BaseException;
 import com.gitee.linzl.commons.exception.BusinessException;
+import com.gitee.linzl.commons.tools.ApiResults;
 import com.gitee.linzl.commons.tools.ServletUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class GlobalExceptionAdvice {
             log.error("url:【{}】,服务器IP:【{}】,参数解析失败:{}", request.getRequestURL(), request.getRemoteAddr(), e.getMessage(),
                     e);
         }
-        return ApiResult.fail(BaseErrorCode.BAD_REQUEST);
+        return ApiResults.fail(BaseErrorCode.BAD_REQUEST);
     }
 
     /**
@@ -52,7 +53,7 @@ public class GlobalExceptionAdvice {
             log.error("url:【{}】,服务器IP:【{}】,参数校验失败:{}", request.getRequestURL(), request.getRemoteAddr(), e.getMessage(),
                     e);
         }
-        return ApiResult.fail(BaseErrorCode.INVALID_PARAMETERS);
+        return ApiResults.fail(BaseErrorCode.INVALID_PARAMETERS);
     }
 
     /**
@@ -65,7 +66,7 @@ public class GlobalExceptionAdvice {
             log.error("url:【{}】,服务器IP:【{}】,参数验证失败:{}", request.getRequestURL(), request.getRemoteAddr(), e.getMessage(),
                     e);
         }
-        return ApiResult.fail(BaseErrorCode.INVALID_PARAMETERS);
+        return ApiResults.fail(BaseErrorCode.INVALID_PARAMETERS);
     }
 
     /**
@@ -78,7 +79,7 @@ public class GlobalExceptionAdvice {
             log.error("url:【{}】,服务器IP:【{}】,方法不支持:{}", request.getRequestURL(), request.getRemoteAddr(), e.getMessage(),
                     e);
         }
-        return ApiResult.fail(BaseErrorCode.NOT_FOUND_URL);
+        return ApiResults.fail(BaseErrorCode.NOT_FOUND_URL);
     }
 
     /**
@@ -91,7 +92,7 @@ public class GlobalExceptionAdvice {
             log.error("url:【{}】,服务器IP:【{}】,不支持当前媒体类型:{}", request.getRequestURL(), request.getRemoteAddr(), e.getMessage(),
                     e);
         }
-        return ApiResult.fail(BaseErrorCode.UNSUPPORTED_MEDIA_TYPE);
+        return ApiResults.fail(BaseErrorCode.UNSUPPORTED_MEDIA_TYPE);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -102,7 +103,7 @@ public class GlobalExceptionAdvice {
             log.error("url:【{}】,服务器IP:【{}】,传参格式错误，是否使用json或表单:{}", request.getRequestURL(), request.getRemoteAddr(), e.getMessage(), e);
         }
         if (ServletUtil.isAjax(request)) {
-            return ApiResult.fail(BaseErrorCode.INVALID_PARAMETERS);
+            return ApiResults.fail(BaseErrorCode.INVALID_PARAMETERS);
         }
         // 同步
         ModelAndView model = new ModelAndView();
@@ -118,7 +119,7 @@ public class GlobalExceptionAdvice {
             log.error("自定义Exception全局异常捕捉:", e);
         }
         if (ServletUtil.isAjax(request)) {
-            return new ApiResult(BaseErrorCode.SYS_ERROR);
+            return ApiResults.fail(BaseErrorCode.SYS_ERROR);
         }
         // 同步
         ModelAndView model = new ModelAndView();
@@ -133,7 +134,7 @@ public class GlobalExceptionAdvice {
         if (log.isErrorEnabled()) {
             log.error("url:【{}】,服务器IP:【{}】,业务异常错误信息:{}", request.getRequestURL(), request.getRemoteAddr(), e.getMessage(), e);
         }
-        return ApiResult.fail(e.getErrorEnum());
+        return ApiResults.fail();
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -143,7 +144,7 @@ public class GlobalExceptionAdvice {
             log.error("系统Exception全局异常捕捉:", e);
         }
         if (ServletUtil.isAjax(request)) {
-            return ApiResult.fail();
+            return ApiResults.fail();
         }
         // 同步
         ModelAndView model = new ModelAndView();

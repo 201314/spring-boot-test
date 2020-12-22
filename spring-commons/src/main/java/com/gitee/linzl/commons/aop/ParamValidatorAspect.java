@@ -2,6 +2,7 @@ package com.gitee.linzl.commons.aop;
 
 import com.gitee.linzl.commons.annotation.ParamValidator;
 import com.gitee.linzl.commons.api.ApiResult;
+import com.gitee.linzl.commons.tools.ApiResults;
 import com.gitee.linzl.commons.tools.BeanValidatorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -36,7 +37,7 @@ public class ParamValidatorAspect {
                 if (parameterAnnotations[i][j] instanceof ParamValidator) {
                     args = point.getArgs()[i];
                     // 参数校验
-                    ApiResult result = ApiResult.fail(BeanValidatorUtil.validate(args));
+                    ApiResult result = ApiResults.fail(BeanValidatorUtil.validate(args));
                     return result;
                 }
             }

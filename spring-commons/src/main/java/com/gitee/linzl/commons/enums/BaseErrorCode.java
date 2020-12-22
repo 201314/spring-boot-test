@@ -19,7 +19,7 @@ public enum BaseErrorCode implements IBaseErrorCode {
     // 成功
     SUCCESS("0000", "操作成功", "success"),
     // 系统异常
-    SYS_ERROR("9999", "系统异常", "unknown error"),
+    SYS_ERROR("0001", "系统异常", "unknown error"),
     // 服务不可用
     SERVICE_NOT_AVAILABLE("2000", "服务不可用", "service not available"),
     // 非法请求
