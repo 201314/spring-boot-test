@@ -1,9 +1,17 @@
 package com.baomidou.springboot.services;
 
-public interface IMyService {
-	default public void add() {
-	}
+import com.gitee.linzl.commons.api.ApiResult;
 
-	default public void doSomeThing(String someThing) {
-	}
+public interface IMyService {
+    default public void add() {
+    }
+
+    default public void doSomeThing(String someThing) {
+    }
+
+    public ApiResult doSomeThing2(String someThing);
+
+    public void doSomeThing3(String someThing);
+    public ApiResult doSomeThing4(String someThing);
+    public ApiResult doSomeThing5(String someThing);
 }

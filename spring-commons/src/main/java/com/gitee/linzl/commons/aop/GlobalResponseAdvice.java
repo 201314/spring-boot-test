@@ -30,7 +30,8 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice {
             return body;
         }
         // 如果不是，包装成统一类型，且约定为成功
-        return ApiResults.success(body);
+        //return ApiResults.success(body);
+        return body;
     }
 
 }
