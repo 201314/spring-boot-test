@@ -8,8 +8,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <description>Spring特性使用</description>
-    <artifactId>spring-feature-test</artifactId>
+    <description>Spring特性使用例子</description>
+    <artifactId>spring-features-test</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

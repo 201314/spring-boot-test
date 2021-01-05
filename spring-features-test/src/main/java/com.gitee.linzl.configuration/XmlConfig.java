@@ -39,9 +39,11 @@ import org.springframework.context.annotation.FilterType;
 //        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE
 //                , value = {PersonServiceImpl.class, PersonController.class})
 //}, useDefaultFilters = false)
-@ComponentScan(value = "com.shunxi", includeFilters = {
-        @ComponentScan.Filter(type = FilterType.CUSTOM, value = {CustomFilter.class})
-}, useDefaultFilters = false)
+@ComponentScan(value = "com.shunxi",
+        includeFilters = {
+                @ComponentScan.Filter(type = FilterType.CUSTOM, value = {CustomFilter.class})
+        },
+        useDefaultFilters = false)
 public class XmlConfig {
 
     /**

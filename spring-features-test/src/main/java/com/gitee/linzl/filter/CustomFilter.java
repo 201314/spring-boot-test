@@ -19,8 +19,9 @@ public class CustomFilter implements TypeFilter {
     /**
      * 此方法作为过滤的方法
      *
-     * @param metadataReader        代表当前正在扫描的类
-     * @param metadataReaderFactory 可以通过此对象获取到的其他扫描过的类
+     * @param metadataReader        代表当前正在扫描的类,类元数据读取器，可以读取一个类上的任意信息，如类上面的注解信息、类的磁盘路径信息、类的
+     *                              class对象的各种信息
+     * @param metadataReaderFactory 可以通过此对象获取到的其他扫描过的类,类元数据读取器工厂，可以通过这个类获取任意一个类的MetadataReader对象
      * @return
      * @throws IOException
      */

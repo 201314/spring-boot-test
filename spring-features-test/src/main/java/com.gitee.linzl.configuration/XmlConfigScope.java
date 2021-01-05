@@ -3,15 +3,10 @@ package com.gitee.linzl.configuration;
 import com.gitee.linzl.condition.LinuxCondition;
 import com.gitee.linzl.condition.WindowsCondition;
 import com.gitee.linzl.domain.CarDomain;
+import com.gitee.linzl.factory.CarFactoryBean;
 import com.gitee.linzl.imports.CustomImport;
 import com.gitee.linzl.imports.CustomImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.*;
-
-/**
- * 使用注解的方式替代xml的方式进行配置
- */
-//可以加入到类上，满足当前条件，这个类中配置的所有bean注册才能生效
-// @Conditional({WindowsCondition.class})
 
 /**
  * <pre>
@@ -19,13 +14,19 @@ import org.springframework.context.annotation.*;
  * 1）：包扫描 + 组件标注注解（@COntroller、@Service、@Repository、@Component等）【自己写的类】
  * 2）：@Bean 【导入的第三方包里面的组件】
  * 3）：@Import【快速给容器中导入一个组件】
- *      1）、@Import（要导入到容器中的主键）：容器中就会自动注册这个主键，id默认是全类名
- *      2）、ImportSelector：返回需要导入的组件的全类名数组
- *      3）、ImportBeanDefinitionRegistrar：手动注册bean容器中
+ *  使用步骤
+ *      1. 将@Import标注在类上，设置value参数
+ *      2. 将@Import标注的类作为AnnotationConfigApplicationContext构造参数创建
+ *      AnnotationConfigApplicationContext对象
+ *      3. 使用AnnotationConfigApplicationContext对象
+ *  @Import的value常见的有5种用法
+ *      1. value为普通的类
+ *      2. value为@Configuration标注的类
+ *      3. value为@CompontentScan标注的类
+ *      4. value为ImportBeanDefinitionRegistrar接口类型
+ *      5. value为ImportSelector接口类型
+ *      6. value为DeferredImportSelector接口类型
  * 4）：使用Spring提供的FactoryBean（工厂Bean）
- * id 默认是组件的全类名
- * com.shunxi.bean.Red
- * com.shunxi.bean.Yellow
  * </pre>
  */
 @Import({CustomImport.class, CustomImportBeanDefinitionRegistrar.class})

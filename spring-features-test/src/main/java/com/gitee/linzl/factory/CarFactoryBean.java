@@ -1,4 +1,4 @@
-package com.gitee.linzl.configuration;
+package com.gitee.linzl.factory;
 
 import com.gitee.linzl.domain.CarDomain;
 import org.springframework.beans.factory.FactoryBean;
