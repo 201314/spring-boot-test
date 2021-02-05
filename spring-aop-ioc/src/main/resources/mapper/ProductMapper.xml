@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.springboot.mapper.ProductMapper">
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from t_product
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.baomidou.springboot.entity.Product">
+        insert into t_product (id, category, detail,
+                               buy_price, updated_time, created_time,
+                               created_by, updated_by, name_encrypt,
+                               name_md5x, name)
+        values (#{id,jdbcType=BIGINT}, #{category,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR},
+                #{buyPrice,jdbcType=DECIMAL}, #{updatedTime,jdbcType=TIMESTAMP}, #{createdTime,jdbcType=TIMESTAMP},
+                #{createdBy,jdbcType=VARCHAR}, #{updatedBy,jdbcType=VARCHAR}, #{nameEncrypt,jdbcType=VARCHAR},
+                #{nameMd5x,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.baomidou.springboot.entity.Product">
+        insert into t_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="category != null">
+                category,
+            </if>
+            <if test="detail != null">
+                detail,
+            </if>
+            <if test="buyPrice != null">
+                buy_price,
+            </if>
+            <if test="updatedTime != null">
+                updated_time,
+            </if>
+            <if test="createdTime != null">
+                created_time,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+            <if test="updatedBy != null">
+                updated_by,
+            </if>
+            <if test="nameEncrypt != null">
+                name_encrypt,
+            </if>
+            <if test="nameMd5x != null">
+                name_md5x,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="category != null">
+                #{category,jdbcType=VARCHAR},
+            </if>
+            <if test="detail != null">
+                #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="buyPrice != null">
+                #{buyPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="updatedTime != null">
+                #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdTime != null">
+                #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedBy != null">
+                #{updatedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="nameEncrypt != null">
+                #{nameEncrypt,jdbcType=VARCHAR},
+            </if>
+            <if test="nameMd5x != null">
+                #{nameMd5x,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.baomidou.springboot.entity.Product">
+        update t_product
+        <set>
+            <if test="category != null">
+                category = #{category,jdbcType=VARCHAR},
+            </if>
+            <if test="detail != null">
+                detail = #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="buyPrice != null">
+                buy_price = #{buyPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdTime != null">
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="nameEncrypt != null">
+                name_encrypt = #{nameEncrypt,jdbcType=VARCHAR},
+            </if>
+            <if test="nameMd5x != null">
+                name_md5x = #{nameMd5x,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.baomidou.springboot.entity.Product">
+        update t_product
+        set category     = #{category,jdbcType=VARCHAR},
+            detail       = #{detail,jdbcType=VARCHAR},
+            buy_price    = #{buyPrice,jdbcType=DECIMAL},
+            updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            created_time = #{createdTime,jdbcType=TIMESTAMP},
+            created_by   = #{createdBy,jdbcType=VARCHAR},
+            updated_by   = #{updatedBy,jdbcType=VARCHAR},
+            name_encrypt = #{nameEncrypt,jdbcType=VARCHAR},
+            name_md5x    = #{nameMd5x,jdbcType=VARCHAR},
+            name         = #{name,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

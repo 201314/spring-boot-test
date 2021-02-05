@@ -32,9 +32,9 @@
 
         <!--jdbc的数据库连接 -->
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://db.360haojie.loan:3306/ipay?useUnicode=true&amp;characterEncoding=utf-8"
-                        userId="ipay"
-                        password="ipay123456!">
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&amp;zeroDateTimeBehavior=convertToNull&amp;useSSL=true&amp;characterEncoding=UTF8&amp;serverTimezone=GMT%2B8"
+                        userId="root"
+                        password="123456">
             <!-- 设置 useInformationSchema 属性为 true,获取表注释信息 -->
             <property name="useInformationSchema" value="true"/>
         </jdbcConnection>
@@ -72,7 +72,13 @@
                              type="XMLMAPPER">
         </javaClientGenerator>
 
-        <table tableName="tp_iou" domainObjectName="TpIouEntity" schema="test"
+        <!-- 要生成哪些相关表 -->
+        <table tableName="t_product" domainObjectName="Product" schema="test"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false" enableSelectByPrimaryKey="false">
+        </table>
+        <table tableName="tp_trade_order" domainObjectName="TpTradeOrder" schema="test"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false" enableSelectByPrimaryKey="false">
