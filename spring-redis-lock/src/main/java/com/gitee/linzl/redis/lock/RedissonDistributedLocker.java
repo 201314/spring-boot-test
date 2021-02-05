@@ -1,49 +1,66 @@
 package com.gitee.linzl.redis.lock;
 
-import java.util.concurrent.TimeUnit;
-
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+
 @Component
 public class RedissonDistributedLocker {
-	@Autowired
-	private RedissonClient redissonClient;
+    @Autowired
+    private RedissonClient redissonClient;
 
-	public void lock(String lockKey) {
-		RLock lock = redissonClient.getLock(lockKey);
-		lock.lock();
-	}
+    public <R> R lock(String lockKey, long timeOutSecond, Supplier<R> supplier) {
+        RLock lock = redissonClient.getLock(lockKey);
+        try {
+            lock.lock(timeOutSecond, TimeUnit.SECONDS);
+            return supplier.get();
+        } finally {
+            lock.unlock();
+        }
+    }
 
-	public void unLock(String lockKey) {
-		RLock lock = redissonClient.getLock(lockKey);
-		lock.unlock();
-	}
+    public <R> R tryLock(String lockKey, long timeOutSecond, Supplier<R> supplier) {
+        RLock lock = redissonClient.getLock(lockKey);
+        try {
+            lock.tryLock(1, timeOutSecond, TimeUnit.SECONDS);
+            return supplier.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+            return null;
+        }
+    }
 
-	/**
-	 * 公平锁，保证执行顺序
-	 * 
-	 * @param lockKey
-	 */
-	public void fairLock(String lockKey) {
-		RLock lock = redissonClient.getFairLock(lockKey);
-		lock.lock();
-	}
+    /**
+     * 公平锁，保证执行顺序
+     *
+     * @param lockKey
+     */
+    public <R> R fairLock(String lockKey, long timeOutSecond, Supplier<R> supplier) {
+        RLock lock = redissonClient.getFairLock(lockKey);
+        try {
+            lock.lock(timeOutSecond, TimeUnit.SECONDS);
+            return supplier.get();
+        } finally {
+            lock.unlock();
+        }
+    }
 
-	public void unFairLock(String lockKey) {
-		RLock lock = redissonClient.getFairLock(lockKey);
-		lock.unlock();
-	}
-
-	public void lock(String lockKey, int leaseTime) {
-		RLock lock = redissonClient.getLock(lockKey);
-		lock.lock(leaseTime, TimeUnit.SECONDS);
-	}
-
-	public void lock(String lockKey, TimeUnit unit, int timeout) {
-		RLock lock = redissonClient.getLock(lockKey);
-		lock.lock(timeout, unit);
-	}
+    public <R> R tryFairLock(String lockKey, long timeOutSecond, Supplier<R> supplier) {
+        RLock lock = redissonClient.getFairLock(lockKey);
+        try {
+            lock.tryLock(1, timeOutSecond, TimeUnit.SECONDS);
+            return supplier.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+            return null;
+        }
+    }
 }
