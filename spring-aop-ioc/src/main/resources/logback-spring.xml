@@ -71,10 +71,10 @@
 		</encoder>
 	</appender>
 
-	<logger name="com.gitee.linzl" level="DEBUG" additivity="true" />
 	<logger name="com.baomidou.springboot" level="DEBUG" additivity="true" />
+	<logger name="org.mybatis.spring.SqlSessionUtils" level="DEBUG" additivity="true" />
 
-	<root level="info">
+	<root level="error">
 		<appender-ref ref="consoleLog" />
 		<appender-ref ref="fileDebugLog" />
 		<appender-ref ref="fileErrorLog" />

@@ -6,8 +6,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 一定要在MvcConfig中初始这个工具类的bean
@@ -65,8 +67,11 @@ public class SpringContextUtil implements ApplicationContextAware {
         return applicationContext.getBean(beanName, clsType);
     }
 
-    public static <T> Map<String, T> getBeansOfType(Class<T> clsType) throws NoSuchBeanDefinitionException {
+    public static <T> Map<String, T> getBeansMap(Class<T> clsType) throws NoSuchBeanDefinitionException {
         return applicationContext.getBeansOfType(clsType);
+    }
+    public static <T> List<T> getBeansList(Class<T> clsType) throws NoSuchBeanDefinitionException {
+        return applicationContext.getBeanProvider(clsType).stream().collect(Collectors.toList());
     }
     /**
      * 判断是否包含此bean，有则返回true

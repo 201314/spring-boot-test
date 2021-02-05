@@ -1,3 +1,4 @@
+/*
 package com.linzl.elasticsearch;
 
 import java.io.IOException;
@@ -66,12 +67,14 @@ public class FreeClientTest {
 		type = "demo";
 	}
 
-	/**
+	*/
+/**
 	 * /POST http://{{host}}:{{port}}/demo/demo/
 	 * 
 	 * { "title":"中国产小型无人机的“对手”来了，俄微型拦截导弹便宜量又多", "tag":"军事",
 	 * "publishTime":"2018-01-24T23:59:30Z" }
-	 */
+	 *//*
+
 	@Test
 	public void addTest() {
 		IndexRequest indexRequest = new IndexRequest(index, type);
@@ -89,7 +92,8 @@ public class FreeClientTest {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * /POST http://{{host}}:{{port}}/_bulk
 	 * 
 	 * {"index":{"_index":"demo","_type":"demo"}}
@@ -107,7 +111,8 @@ public class FreeClientTest {
 	 * {"index":{"_index":"demo","_type":"demo"}}
 	 * 
 	 * {"title":"皇马官方通告拉莫斯伊斯科伤情将缺阵西甲关键战","tag":"体育","publishTime":"2018-01-26T20:34:00Z"}
-	 */
+	 *//*
+
 	@Test
 	public void batchAddTest() {// 批量插入数据
 		BulkRequest bulkRequest = new BulkRequest();
@@ -142,7 +147,8 @@ public class FreeClientTest {
 		return indexRequest;
 	}
 
-	/**
+	*/
+/**
 	 * 查询目标：2018年1月26日早八点到晚八点关于费德勒的前十条体育新闻的标题
 	 * 
 	 * /POST http://{{host}}:{{port}}/demo/demo/_search
@@ -151,7 +157,8 @@ public class FreeClientTest {
 	 * 
 	 * "query": { "bool": { "must": [ { "term": { "tag.keyword": "体育" } }, {
 	 * "match": { "title": "费德勒" } } ] } } }
-	 */
+	 *//*
+
 
 	@Test
 	public void queryTest() {
@@ -181,10 +188,12 @@ public class FreeClientTest {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * /POST http://{{host}}:{{port}}/demo/demo/AWE1fnSx00f4t28WJ4D6/_update {
 	 * "doc":{ "tag":"网球" } }
-	 */
+	 *//*
+
 	@Test
 	public void updateTest() {
 		UpdateRequest updateRequest = new UpdateRequest(index, type, "kxTYZmIBrWkIOj9Ymudt");
@@ -198,13 +207,17 @@ public class FreeClientTest {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * /DELETE http://{{host}}:{{port}}/delete_demo/demo/AWExGSdW00f4t28WAPen
-	 */
+	 *//*
+
 	@Test
-	/**
+	*/
+/**
 	 * 该操作是同步执行
-	 */
+	 *//*
+
 	public void delete() {
 		DeleteRequest deleteRequest = new DeleteRequest(index, type, "kxTYZmIBrWkIOj9Ymudt");
 		DeleteResponse response = null;
@@ -217,9 +230,11 @@ public class FreeClientTest {
 	}
 
 	@Test
-	/**
+	*/
+/**
 	 * 该操作是异步执行
-	 */
+	 *//*
+
 	public void deleteAsyn() {
 		DeleteRequest request = new DeleteRequest(index, type, "kxTYZmIBrWkIOj9Ymudt");
 		rhlClient.deleteAsync(request, new ActionListener<DeleteResponse>() {
@@ -235,21 +250,27 @@ public class FreeClientTest {
 		});
 	}
 
-	/**
+	*/
+/**
 	 * /POST http://{{host}}:{{port}}/delete_demo/demo/_delete_by_query
 	 * 
 	 * { "query":{ "match":{ "content":"test1" } } }
-	 */
+	 *//*
 
-	/**
+
+	*/
+/**
 	 * /POST http://{{host}}:{{port}}/delete_demo/demo/_delete_by_query
 	 * 
 	 * { "query":{ "term":{ "content.keyword":"test1" } } }
-	 */
+	 *//*
 
-	/**
+
+	*/
+/**
 	 * 先查询，后删除
-	 */
+	 *//*
+
 	@Test
 	public void deleteByQuery() {
 		try {
@@ -305,9 +326,11 @@ public class FreeClientTest {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * 部分high level client还不支持的，可以使用low level client
-	 */
+	 *//*
+
 	@Test
 	public void otherTest() {
 		Settings indexSettings = Settings.builder().put("index.number_of_shards", 1).put("index.number_of_replicas", 0)
@@ -371,4 +394,4 @@ public class FreeClientTest {
 		String source = indexRequest.source().utf8ToString();
 		return source;
 	}
-}
+}*/

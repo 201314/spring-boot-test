@@ -90,7 +90,7 @@ public class BaseMongoDaoTest {
 
     @Test
     public void page() {
-        Sort sort = new Sort(Sort.Direction.DESC, "creatTime");
+        /*Sort sort = new Sort(Sort.Direction.DESC, "creatTime");
         int page = 1;
         int pageSize = 10;
 
@@ -100,7 +100,7 @@ public class BaseMongoDaoTest {
         long total = dao.count(query);
         List<UserEntity> items = dao.find(query, page, pageSize, sort);
         System.out.println("total:" + total);
-        System.out.println("items:" + items);
+        System.out.println("items:" + items);*/
     }
 
     @Test

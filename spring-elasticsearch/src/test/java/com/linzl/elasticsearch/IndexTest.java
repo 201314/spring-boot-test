@@ -1,3 +1,4 @@
+/*
 package com.linzl.elasticsearch;
 
 import java.io.IOException;
@@ -172,3 +173,4 @@ public class IndexTest {
 //		});
 	}
 }
+*/
