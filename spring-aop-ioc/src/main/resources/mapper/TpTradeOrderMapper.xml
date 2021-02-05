@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.springboot.mapper.TpTradeOrderMapper">
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from tp_trade_order
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.baomidou.springboot.entity.TpTradeOrder">
+        insert into tp_trade_order (id, trade_status, hello,
+                                    updated_time, created_time, created_by,
+                                    updated_by)
+        values (#{id,jdbcType=BIGINT}, #{tradeStatus,jdbcType=VARCHAR}, #{hello,jdbcType=VARCHAR},
+                #{updatedTime,jdbcType=TIMESTAMP}, #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=VARCHAR},
+                #{updatedBy,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.baomidou.springboot.entity.TpTradeOrder">
+        insert into tp_trade_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="tradeStatus != null">
+                trade_status,
+            </if>
+            <if test="hello != null">
+                hello,
+            </if>
+            <if test="updatedTime != null">
+                updated_time,
+            </if>
+            <if test="createdTime != null">
+                created_time,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+            <if test="updatedBy != null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="tradeStatus != null">
+                #{tradeStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="hello != null">
+                #{hello,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedTime != null">
+                #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdTime != null">
+                #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedBy != null">
+                #{updatedBy,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.baomidou.springboot.entity.TpTradeOrder">
+        update tp_trade_order
+        <set>
+            <if test="tradeStatus != null">
+                trade_status = #{tradeStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="hello != null">
+                hello = #{hello,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdTime != null">
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.baomidou.springboot.entity.TpTradeOrder">
+        update tp_trade_order
+        set trade_status = #{tradeStatus,jdbcType=VARCHAR},
+            hello        = #{hello,jdbcType=VARCHAR},
+            updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            created_time = #{createdTime,jdbcType=TIMESTAMP},
+            created_by   = #{createdBy,jdbcType=VARCHAR},
+            updated_by   = #{updatedBy,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>
