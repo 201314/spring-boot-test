@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -28,7 +29,7 @@ import java.util.Objects;
  */
 @ConditionalOnBean(MongoTemplate.class)
 public class BaseMongoDao<T, ID> {
-    @Nullable
+    @Autowired
     private MongoTemplate mongoTemplate;
     private Class<T> entityClass;
 
@@ -58,14 +59,6 @@ public class BaseMongoDao<T, ID> {
 
     public List<T> findAll() {
         return mongoTemplate.findAll(entityClass);
-    }
-
-    public GroupByResults<T> group(String inputCollectionName, GroupBy groupBy) {
-        return mongoTemplate.group(inputCollectionName, groupBy, entityClass);
-    }
-
-    public GroupByResults<T> group(Criteria criteria, String inputCollectionName, GroupBy groupBy) {
-        return mongoTemplate.group(criteria, inputCollectionName, groupBy, entityClass);
     }
 
     public T findOne(Query query) {

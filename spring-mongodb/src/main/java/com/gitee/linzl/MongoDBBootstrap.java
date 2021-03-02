@@ -6,11 +6,10 @@ import com.mongodb.client.gridfs.GridFSBuckets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 
-@SpringBootApplication
+@EnableAutoCommons
 public class MongoDBBootstrap {
 
     public static void main(String args[]) {
@@ -20,11 +19,11 @@ public class MongoDBBootstrap {
     }
 
     @Autowired
-    private MongoDbFactory mongoDbFactory;
+    private MongoDatabaseFactory mongoDbFactory;
 
     @Bean
     public GridFSBucket getGridFSBuckets() {
-        MongoDatabase db = mongoDbFactory.getDb();
+        MongoDatabase db = mongoDbFactory.getMongoDatabase();
         return GridFSBuckets.create(db);
     }
 }

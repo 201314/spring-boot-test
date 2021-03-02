@@ -12,7 +12,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 /**
- * 自动添充公共字段
+ * 自动添充公共字段,不建议直接填充时间,而是由数据库服务器来默认填充
+ * <p>
+ * 如果是业务时间，则直接new
  *
  * @author linzhenlie
  * @date 2020-06-05

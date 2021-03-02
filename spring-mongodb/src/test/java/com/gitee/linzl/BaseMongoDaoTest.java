@@ -1,14 +1,13 @@
 package com.gitee.linzl;
 
 import com.alibaba.fastjson.JSON;
-import com.gitee.linzl.dao.MongoDaoExt;
 import com.gitee.linzl.entity.UserEntity;
+import com.gitee.linzl.mongo.BaseMongoDao;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -28,7 +27,7 @@ import java.util.List;
 @Slf4j
 public class BaseMongoDaoTest {
     @Autowired
-    private MongoDaoExt dao;
+    private BaseMongoDao<UserEntity, Long> dao;
 
     @Test
     public void collectionExists() {
