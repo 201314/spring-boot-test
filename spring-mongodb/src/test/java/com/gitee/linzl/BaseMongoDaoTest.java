@@ -114,6 +114,7 @@ public class BaseMongoDaoTest {
 
     @Test
     public void insert() {
+        log.info("CLASS:{}",dao);
         UserEntity user = new UserEntity();
         user.setId(10L);
         user.setUserName("小明10");

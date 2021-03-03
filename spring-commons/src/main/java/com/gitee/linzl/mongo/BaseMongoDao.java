@@ -24,6 +24,16 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * <pre>{@code
+ *     @Service
+ *     public class UserDao extends BaseMongoDao<UserEntity, Long>{ }
+ *
+ *     @Autowired
+ *     UserDao dao;
+ *     dao.insert(UserEntity);
+ * }</pre>
+ *
+ *
  * @author linzhenlie
  * @date 2019/10/10
  */
