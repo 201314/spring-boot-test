@@ -3,18 +3,13 @@ package com.gitee.linzl.mongo;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.mapreduce.GroupBy;
-import org.springframework.data.mongodb.core.mapreduce.GroupByResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -37,9 +32,8 @@ import java.util.Objects;
  * @author linzhenlie
  * @date 2019/10/10
  */
-@ConditionalOnBean(MongoTemplate.class)
 public class BaseMongoDao<T, ID> {
-    @Autowired
+    @Autowired(required=false)
     private MongoTemplate mongoTemplate;
     private Class<T> entityClass;
 
