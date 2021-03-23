@@ -11,13 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.interceptor.*;
+import org.springframework.transaction.interceptor.NameMatchTransactionAttributeSource;
+import org.springframework.transaction.interceptor.RollbackRuleAttribute;
+import org.springframework.transaction.interceptor.RuleBasedTransactionAttribute;
+import org.springframework.transaction.interceptor.TransactionAttribute;
+import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,13 +34,12 @@ import java.util.Map;
 @Slf4j
 // 继承SpringBootServletInitializer，则可打包成war部署在外置tomcat下
 // 否则只能通过 java -jar 命令启动
-public class SpringAopBootstrap { // extends SpringBootServletInitializer {
-    // @Override
-    // protected SpringApplicationBuilder configure(SpringApplicationBuilder
-    // builder) {
-    // builder.bannerMode(Banner.Mode.OFF);
-    // return builder.sources(SpringAopBootstrap.class);
-    // }
+public class SpringAopBootstrap extends SpringBootServletInitializer {
+     @Override
+     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+         builder.bannerMode(Banner.Mode.OFF);
+         return builder.sources(SpringAopBootstrap.class);
+     }
     public static void main(String[] args) {
         SpringApplicationBuilder app = new SpringApplicationBuilder(SpringAopBootstrap.class);
         app.bannerMode(Banner.Mode.OFF);
