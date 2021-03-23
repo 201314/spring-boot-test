@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
 /**
@@ -20,7 +20,7 @@ import org.springframework.util.DigestUtils;
  * @date 2020-06-05
  */
 @ConditionalOnClass(value = Mapper.class)
-@Configuration
+@Component
 @Slf4j
 public class MybatisConfig {
     @ConditionalOnMissingBean(value = {OptUserService.class})
@@ -56,8 +56,8 @@ public class MybatisConfig {
     }
 
     @Bean
-    public FieldEncryptInterceptor paginationInterceptor(@Nullable ConversionService conversionService,
-                                                         @Autowired CryptService cryptService) {
+    public FieldEncryptInterceptor fieldEncryptInterceptor(@Autowired(required = false) ConversionService conversionService,
+                                                           @Autowired CryptService cryptService) {
         return new FieldEncryptInterceptor(conversionService, cryptService);
     }
 }
