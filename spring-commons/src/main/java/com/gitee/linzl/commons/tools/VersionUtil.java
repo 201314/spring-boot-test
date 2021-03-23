@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.SpringDataMongoDB;
  */
 @Getter
 @Setter
-public class VersionUtils {
+public class VersionUtil {
     /**
      * 与基准版本比较，小于则提示升级，大于等于则不需要
      *
@@ -39,7 +39,7 @@ public class VersionUtils {
      * @return
      */
     public static String version() {
-        Package pkg = VersionUtils.class.getPackage();
+        Package pkg = VersionUtil.class.getPackage();
         String versionString = (pkg != null ? pkg.getImplementationVersion() : null);
         return versionString;
     }

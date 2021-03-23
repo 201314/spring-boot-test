@@ -13,7 +13,7 @@ import java.util.Set;
  * @author linzhenlie
  * @date 2019/8/27
  */
-public class ValidationUtil {
+public class ValidatorUtil {
     //    private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private static Validator validator = Validation.byProvider(HibernateValidator.class)
             .configure()

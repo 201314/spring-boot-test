@@ -14,8 +14,8 @@ import java.util.Arrays;
  * @date 2019/8/27
  */
 public class SensitiveWordValidator implements ConstraintValidator<SensitiveWord, String> {
-    @Value("${validator.sensitiveWords}")
-    private static String sensitiveWords = "限量,秒杀,抽奖,全网最低,天猫,京东,淘宝";
+    @Value("${validator.sensitiveWords:'限量,秒杀,抽奖,全网最低,天猫,京东,淘宝'}")
+    private String sensitiveWords;
 
     @Override
     public void initialize(SensitiveWord sensitiveWord) {
