@@ -1,10 +1,11 @@
 package com.gitee.linzl.commons.aop;
 
 import com.gitee.linzl.commons.annotation.ParamValidator;
-import com.gitee.linzl.commons.api.ApiResult;
+import com.gitee.linzl.commons.enums.BaseErrorCode;
 import com.gitee.linzl.commons.tools.ApiResults;
-import com.gitee.linzl.commons.tools.BeanValidatorUtil;
+import com.gitee.linzl.commons.tools.ValidatorUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.MapUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * @author linzhenlie
@@ -36,9 +38,11 @@ public class ParamValidatorAspect {
             for (int j = 0; j < parameterAnnotations[i].length; j++) {
                 if (parameterAnnotations[i][j] instanceof ParamValidator) {
                     args = point.getArgs()[i];
-                    // 参数校验
-                    ApiResult result = ApiResults.fail(BeanValidatorUtil.validate(args));
-                    return result;
+                    Map<String, String> result = ValidatorUtil.validate(args);
+                    log.info("参数校验结果:{}", result);
+                    if (MapUtils.isNotEmpty(result)) {
+                        return ApiResults.fail(BaseErrorCode.INVALID_PARAMETERS);
+                    }
                 }
             }
         }

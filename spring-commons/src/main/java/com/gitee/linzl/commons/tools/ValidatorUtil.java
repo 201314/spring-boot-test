@@ -14,7 +14,7 @@ import java.util.*;
  * @author linzhenlie
  * @date 2020-05-12
  */
-public class BeanValidatorUtil {
+public class ValidatorUtil {
     private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     /**
