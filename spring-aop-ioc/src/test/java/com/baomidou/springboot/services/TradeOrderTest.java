@@ -70,4 +70,16 @@ public class TradeOrderTest {
         log.info("doBiz4Trx");
         service.doBiz4Trx();
     }
+
+    @Test
+    public void doBiz5TrxAndThis() {
+        log.info("doBiz5TrxAndThis");
+        service.doBiz5TrxAndThis();
+    }
+
+    @Test
+    public void doBiz5TrxAndThisTrx() {
+        log.info("doBiz5TrxAndThisTrx");
+        service.doBiz5TrxAndThisTrx();
+    }
 }

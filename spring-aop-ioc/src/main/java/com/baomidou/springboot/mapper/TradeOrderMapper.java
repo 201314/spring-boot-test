@@ -1,6 +1,6 @@
 package com.baomidou.springboot.mapper;
 
-import com.baomidou.springboot.entity.TradeOrder;
+import com.baomidou.springboot.entity.TpTradeOrder;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -19,23 +19,17 @@ public interface TradeOrderMapper {
      *
      * @mbg.generated 2021-01-08 18:02:50
      */
-    int insert(TradeOrder record);
+    int insertSelective(TpTradeOrder record);
 
     /**
      *
      * @mbg.generated 2021-01-08 18:02:50
      */
-    int insertSelective(TradeOrder record);
+    int updateByPrimaryKeySelective(TpTradeOrder record);
 
     /**
      *
      * @mbg.generated 2021-01-08 18:02:50
      */
-    int updateByPrimaryKeySelective(TradeOrder record);
-
-    /**
-     *
-     * @mbg.generated 2021-01-08 18:02:50
-     */
-    int updateByPrimaryKey(TradeOrder record);
+    int updateByPrimaryKey(TpTradeOrder record);
 }

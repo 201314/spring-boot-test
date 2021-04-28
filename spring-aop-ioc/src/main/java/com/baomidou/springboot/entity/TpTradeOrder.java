@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class TradeOrder extends BaseEntity {
+public class TpTradeOrder extends BaseEntity {
     private Long id;
 
     /**

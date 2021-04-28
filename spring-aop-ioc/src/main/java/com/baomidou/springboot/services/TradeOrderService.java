@@ -1,17 +1,17 @@
 package com.baomidou.springboot.services;
 
-import com.baomidou.springboot.entity.TradeOrder;
+import com.baomidou.springboot.entity.TpTradeOrder;
 
 /**
  * @author linzhenlie-jk
  * @date 2020/12/28
  */
 public interface TradeOrderService {
-    public void save(TradeOrder order);
+    public void save(TpTradeOrder order);
 
-    public void updateTrx(TradeOrder order);
+    public void updateTrx(TpTradeOrder order);
 
-    public TradeOrder select(Long id);
+    public TpTradeOrder select(Long id);
 
     public void doBiz11();
     public void doBiz12();
@@ -27,4 +27,7 @@ public interface TradeOrderService {
 
     public void doBiz4();
     public void doBiz4Trx();
+
+    public void doBiz5TrxAndThis();
+    public void doBiz5TrxAndThisTrx();
 }
