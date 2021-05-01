@@ -9,4 +9,5 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
 mybatis:
   type-aliases-package: com.baomidou.springboot.entity
+  mapper-locations: classpath:/mapper/*Mapper.xml
 
