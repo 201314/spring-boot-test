@@ -13,8 +13,13 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -308,14 +313,19 @@ public class RedisUtil {
         for (int start = 1; start < length; start++) {
             bit = (String) stringRedisTemplate.opsForValue().get(start);
             BitSet set = BitSet.valueOf(bit.getBytes());
-            if (BitOpr.AND == opr) {
-                bitSet.and(set);
-            } else if (BitOpr.OR == opr) {
-                bitSet.or(set);
-            } else if (BitOpr.XOR == opr) {
-                bitSet.xor(set);
-            } else if (BitOpr.ANDNOT == opr) {
-                bitSet.andNot(set);
+            switch (opr) {
+                case AND:
+                    bitSet.and(set);
+                    break;
+                case OR:
+                    bitSet.or(set);
+                    break;
+                case XOR:
+                    bitSet.xor(set);
+                    break;
+                case ANDNOT:
+                    bitSet.andNot(set);
+                    break;
             }
         }
         return bitSet;
