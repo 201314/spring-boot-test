@@ -12,9 +12,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 一定要在MvcConfig中初始这个工具类的bean
- * <p>
  * 根据bean名称，获取对应的bean实例
+ * <p>
+ * 实现 ***Aware可以自动感知
  *
  * @author linzl
  * <p>
@@ -70,9 +70,11 @@ public class SpringContextUtil implements ApplicationContextAware {
     public static <T> Map<String, T> getBeansMap(Class<T> clsType) throws NoSuchBeanDefinitionException {
         return applicationContext.getBeansOfType(clsType);
     }
+
     public static <T> List<T> getBeansList(Class<T> clsType) throws NoSuchBeanDefinitionException {
         return applicationContext.getBeanProvider(clsType).stream().collect(Collectors.toList());
     }
+
     /**
      * 判断是否包含此bean，有则返回true
      *
