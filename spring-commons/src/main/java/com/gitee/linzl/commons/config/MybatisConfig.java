@@ -4,14 +4,13 @@ import com.gitee.linzl.commons.mybatis.interceptor.AutoFillFieldInterceptor;
 import com.gitee.linzl.commons.mybatis.interceptor.FieldEncryptInterceptor;
 import com.gitee.linzl.commons.mybatis.service.CryptService;
 import com.gitee.linzl.commons.mybatis.service.OptUserService;
+import com.gitee.linzl.commons.tools.EncryptUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
@@ -56,8 +55,12 @@ public class MybatisConfig {
     }
 
     @Bean
-    public FieldEncryptInterceptor fieldEncryptInterceptor(@Autowired(required = false) ConversionService conversionService,
-                                                           @Autowired CryptService cryptService) {
-        return new FieldEncryptInterceptor(conversionService, cryptService);
+    public FieldEncryptInterceptor fieldEncryptInterceptor() {
+        return new FieldEncryptInterceptor();
+    }
+
+    @Bean
+    public EncryptUtil encryptUtil(@Autowired CryptService cryptService) {
+        return new EncryptUtil(cryptService);
     }
 }
