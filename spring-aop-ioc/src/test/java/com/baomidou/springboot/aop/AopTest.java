@@ -3,6 +3,7 @@ package com.baomidou.springboot.aop;
 import com.baomidou.springboot.services.IMyService;
 import com.baomidou.springboot.services.MyService;
 import com.gitee.linzl.commons.api.ApiResult;
+import com.gitee.linzl.commons.tools.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,5 +74,11 @@ public class AopTest {
     public void testExceptionCatch5() {
         ApiResult apiResult = myService.doSomeThing5("有返回结果，但是运行时异常");
         log.info("apiResult==" + apiResult);
+    }
+
+    @Test
+    public void testAware() {
+        IMyService iMyService = SpringContextUtil.getBean(IMyService.class);
+        log.info("getBean iMyService:【{}】", iMyService);
     }
 }
