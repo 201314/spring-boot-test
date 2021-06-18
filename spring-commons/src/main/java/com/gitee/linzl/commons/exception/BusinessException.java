@@ -25,4 +25,8 @@ public class BusinessException extends ServiceException {
         super(api);
         this.data = data;
     }
+
+    public final Object getData() {
+        return this.data;
+    }
 }
