@@ -3,27 +3,23 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <description>Spring特性使用例子</description>
-    <artifactId>spring-features-test</artifactId>
+    <artifactId>spring-rocketmq</artifactId>
 
     <parent>
-        <artifactId>spring-boot-test</artifactId>
         <groupId>com.gitee.linzl</groupId>
+        <artifactId>spring-boot-test</artifactId>
         <version>${revision}</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -38,4 +34,3 @@
         </plugins>
     </build>
 </project>
-
