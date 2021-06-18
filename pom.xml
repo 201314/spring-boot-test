@@ -30,8 +30,7 @@
         <module>spring-kafka</module>
         <module>spring-mongodb</module>
         <module>spring-redis-lock</module>
-        <module>spring-rabbitmq-producer</module>
-        <module>spring-rabbitmq-consumer</module>
+        <module>spring-rabbitmq</module>
         <module>spring-logback</module>
         <module>spring-websocket</module>
         <module>spring-quartz-batch</module>
