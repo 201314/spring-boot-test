@@ -60,7 +60,7 @@ public class EncryptUtil {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        list.forEach(entity -> {
+        list.stream().filter(Objects::nonNull).forEach(entity -> {
             encryptField(entity);
         });
     }
@@ -97,7 +97,7 @@ public class EncryptUtil {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        list.forEach(entity -> {
+        list.stream().filter(Objects::nonNull).forEach(entity -> {
             decryptField(entity);
         });
     }
