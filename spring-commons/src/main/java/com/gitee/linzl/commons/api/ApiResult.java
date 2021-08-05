@@ -45,7 +45,7 @@ public class ApiResult<T> implements Serializable {
      */
     private LocalDateTime responseTime;
 
-    private ApiResult() {
+    public ApiResult() {
 
     }
 
@@ -56,7 +56,7 @@ public class ApiResult<T> implements Serializable {
     @JsonIgnore
     @JSONField(serialize = false)
     public boolean isSuccess() {
-        return this.status;
+        return this.status == true;
     }
 
     @JsonIgnore

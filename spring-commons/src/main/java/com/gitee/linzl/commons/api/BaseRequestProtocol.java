@@ -2,12 +2,10 @@ package com.gitee.linzl.commons.api;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 公共基础API
@@ -17,11 +15,10 @@ import java.nio.charset.StandardCharsets;
  */
 @Setter
 @Getter
-public class BaseApi implements Serializable {
-    /**
-     *
-     */
+public class BaseRequestProtocol implements Serializable {
     private static final long serialVersionUID = 8438660582714922587L;
+    @NotBlank
+    private String appId;
     /**
      * 协议版本
      */
@@ -59,13 +56,16 @@ public class BaseApi implements Serializable {
     @NotBlank
     private String bizContent;
 
-    public String getCharset() {
-        return StringUtils.isEmpty(charset) ? StandardCharsets.UTF_8.name() : charset;
-    }
-
-    public String getSignType() {
-        return StringUtils.isEmpty(signType) ? "RSA" : signType;
-    }
+    /**
+     * 对称加密类型
+     *
+     * @return
+     */
+    private String encryptType;
+    /**
+     * 对称密钥
+     */
+    private String encryptKey;
 
     /**
      * 仅允许请求时间与当前系统时间五分钟内的请求

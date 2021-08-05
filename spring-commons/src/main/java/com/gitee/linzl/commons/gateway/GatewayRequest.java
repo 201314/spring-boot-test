@@ -6,14 +6,14 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
 
-import com.gitee.linzl.commons.api.BaseApi;
+import com.gitee.linzl.commons.api.BaseRequestProtocol;
 
 import lombok.Getter;
 import lombok.Setter;
  
 @Setter
 @Getter
-public class GatewayRequest extends BaseApi implements Serializable {
+public class GatewayRequest extends BaseRequestProtocol implements Serializable {
     private static final long serialVersionUID = -8420066159879965843L;
     private String subChannel;
     private String activityInfo;

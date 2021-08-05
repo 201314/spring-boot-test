@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gitee.linzl.commons.api.ApiResult;
-import com.gitee.linzl.commons.api.BaseApi;
+import com.gitee.linzl.commons.api.BaseRequestProtocol;
 import com.gitee.linzl.commons.tools.UserClientUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public abstract class AbstractBaseAction {
 	 * @param requestInfo
 	 * @return
 	 */
-	public ApiResult<Map> handle(BaseApi requestInfo, HttpServletRequest request) {
+	public ApiResult<Map> handle(BaseRequestProtocol requestInfo, HttpServletRequest request) {
 		String json = JSON.toJSONString(requestInfo);
 		Map requestMap = JSONObject.parseObject(json).getInnerMap();
 		String clientRealIp = UserClientUtil.getInstance().getIp(request);
