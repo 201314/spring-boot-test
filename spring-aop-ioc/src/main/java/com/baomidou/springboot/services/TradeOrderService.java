@@ -19,15 +19,6 @@ public interface TradeOrderService {
     public void doBiz1();
     public void doBiz1Trx();
 
-    public void doBiz2();
-    public void doBiz2Trx();
-
-    public void doBiz3();
-    public void doBiz3Trx();
-
-    public void doBiz4();
-    public void doBiz4Trx();
-
     public void doBiz5TrxAndThis();
     public void doBiz5TrxAndThisTrx();
 }

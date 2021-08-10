@@ -9,27 +9,11 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface TradeOrderMapper {
-    /**
-     *
-     * @mbg.generated 2021-01-08 18:02:50
-     */
-    int deleteByPrimaryKey(Long id);
+    TpTradeOrder selectById(Long id);
 
-    /**
-     *
-     * @mbg.generated 2021-01-08 18:02:50
-     */
     int insertSelective(TpTradeOrder record);
 
-    /**
-     *
-     * @mbg.generated 2021-01-08 18:02:50
-     */
     int updateByPrimaryKeySelective(TpTradeOrder record);
 
-    /**
-     *
-     * @mbg.generated 2021-01-08 18:02:50
-     */
     int updateByPrimaryKey(TpTradeOrder record);
 }

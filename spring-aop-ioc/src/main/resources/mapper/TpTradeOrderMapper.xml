@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.baomidou.springboot.mapper.TradeOrderMapper">
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        delete
+    <select id="selectById" parameterType="java.lang.Long" resultType="com.baomidou.springboot.entity.TpTradeOrder">
+        select *
         from tp_trade_order
         where id = #{id,jdbcType=BIGINT}
-    </delete>
-    <insert id="insert" parameterType="com.baomidou.springboot.entity.TpTradeOrder">
-        insert into tp_trade_order (id, trade_status, hello,
-                                    updated_time, created_time, created_by,
-                                    updated_by)
-        values (#{id,jdbcType=BIGINT}, #{tradeStatus,jdbcType=VARCHAR}, #{hello,jdbcType=VARCHAR},
-                #{updatedTime,jdbcType=TIMESTAMP}, #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=VARCHAR},
-                #{updatedBy,jdbcType=VARCHAR})
-    </insert>
+    </select>
     <insert id="insertSelective" parameterType="com.baomidou.springboot.entity.TpTradeOrder">
         insert into tp_trade_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
