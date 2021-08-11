@@ -19,12 +19,12 @@ public class TrxRequiredSupportAndSessionCloseTest {
     @Test
     public void doBiz4() {
         log.info("doBiz1无事务,事务REQUIRED、SUPPORT,mybatis Session一级缓存【关闭】");
-        service.doBiz1();
+        service.doBiz1NoException();
     }
 
     @Test
     public void doBiz4Trx() {
         log.info("doBiz1Trx有事务,事务REQUIRED、SUPPORT,mybatis Session一级缓存【关闭】");
-        service.doBiz1Trx();
+        service.doBiz1NoExceptionTrx();
     }
 }

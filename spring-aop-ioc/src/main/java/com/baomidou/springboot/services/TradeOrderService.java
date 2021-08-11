@@ -7,18 +7,21 @@ import com.baomidou.springboot.entity.TpTradeOrder;
  * @date 2020/12/28
  */
 public interface TradeOrderService {
-    public void save(TpTradeOrder order);
+    public void save(Long id);
 
-    public void updateTrx(TpTradeOrder order);
+    public void updateTrx(TpTradeOrder order, Boolean throwException);
 
-    public TpTradeOrder select(Long id);
+    public void doBiz1NoException();
 
-    public void doBiz11();
-    public void doBiz12();
+    public void doBiz1NoExceptionTrx();
 
-    public void doBiz1();
-    public void doBiz1Trx();
-
+    /**
+     * doBiz5TrxAndThis 是用来验证this调用，事务失效的现象
+     */
     public void doBiz5TrxAndThis();
+
+    /**
+     * doBiz5TrxAndThisTrx 是用来验证this调用，事务失效的现象
+     */
     public void doBiz5TrxAndThisTrx();
 }

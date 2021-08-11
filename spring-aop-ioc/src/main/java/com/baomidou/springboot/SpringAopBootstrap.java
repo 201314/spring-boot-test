@@ -11,6 +11,7 @@ import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.interceptor.CustomizableTraceInterceptor;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.Banner;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -21,7 +22,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.interceptor.NameMatchTransactionAttributeSource;
 import org.springframework.transaction.interceptor.RollbackRuleAttribute;
 import org.springframework.transaction.interceptor.RuleBasedTransactionAttribute;
@@ -35,11 +35,11 @@ import java.util.List;
 import java.util.Map;
 
 @EnableAspectJAutoProxy(exposeProxy = true)
-@EnableTransactionManagement
 @EnableAutoCommons
 @Slf4j
-// 继承SpringBootServletInitializer，则可打包成war部署在外置tomcat下
-// 否则只能通过 java -jar 命令启动
+/**
+ *  继承SpringBootServletInitializer，则可打包成war部署在外置tomcat下,否则只能通过 java -jar 命令启动
+ */
 public class SpringAopBootstrap extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
@@ -57,10 +57,19 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
         }
     }
 
+    // -----  对Controller getUser方法进行跟踪 START
+    @Bean
+    public Advisor jpaRepositoryAdvisor() {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+        pointcut.setExpression("execution(* com.baomidou.springboot.controller.*Rest.getUser())");
+        return new DefaultPointcutAdvisor(pointcut, customizableTraceInterceptor());
+    }
+
     @Bean
     public CustomizableTraceInterceptor customizableTraceInterceptor() {
         return new CustomizableTraceInterceptor();
     }
+    // -----  对Controller getUser方法进行跟踪 END
 
     @Profile("mybatisSessionClose")
     @Bean
@@ -77,28 +86,33 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
         return configurationCustomizers;
     }
 
+    // ============= 事务配置 START
+
+    /**
+     * 切面拦截规则
+     */
     @Bean
-    public Advisor jpaRepositoryAdvisor() {
+    public Advisor advisor(@Autowired @Qualifier("transactionInterceptorExt") TransactionInterceptor transactionInterceptor) {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        // pointcut.setExpression("execution(public *
-        // org.springframework.data.jpa.repository.JpaRepository+.*(..))");
-        pointcut.setExpression("execution(* com.baomidou.springboot.controller.*Rest.getUser())");
-        return new DefaultPointcutAdvisor(pointcut, customizableTraceInterceptor());
+        // 拦截所有service服务方法
+        pointcut.setExpression("execution(* com.baomidou.springboot.services.*.*(..))");
+        return new DefaultPointcutAdvisor(pointcut, transactionInterceptor);
     }
 
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-
+    /**
+     * 事务拦截类型
+     */
     @Profile("trxRequired")
-    @Bean
-    public TransactionInterceptor trxRequired() {
+    @Bean("transactionInterceptorExt")
+    public TransactionInterceptor trxRequired(PlatformTransactionManager transactionManager) {
         log.info("配置事务配置trxRequired");
         Map<String, TransactionAttribute> txMap = new HashMap<>(5);
 
-        RuleBasedTransactionAttribute requiredTx = new RuleBasedTransactionAttribute();
-        requiredTx.setRollbackRules(Collections.singletonList(new RollbackRuleAttribute(Exception.class)));
         /*当前存在事务就使用当前事务，当前不存在事务就创建一个新的事务*/
-        requiredTx.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        RuleBasedTransactionAttribute requiredTx =
+                new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED,
+                        Collections.singletonList(new RollbackRuleAttribute(Exception.class)));
+        requiredTx.setReadOnly(false);
         txMap.put("*Trx", requiredTx);
 
         NameMatchTransactionAttributeSource source = new NameMatchTransactionAttributeSource();
@@ -110,16 +124,16 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
     }
 
     @Profile("trxAndSupport")
-    @Bean
-    public TransactionInterceptor trxAndSupport() {
+    @Bean("transactionInterceptorExt")
+    public TransactionInterceptor trxAndSupport(PlatformTransactionManager transactionManager) {
         log.info("配置事务配置trxAndSupport");
         Map<String, TransactionAttribute> txMap = new HashMap<>(5);
 
-        RuleBasedTransactionAttribute requiredTx = new RuleBasedTransactionAttribute();
-        requiredTx.setReadOnly(false);
-        requiredTx.setRollbackRules(Collections.singletonList(new RollbackRuleAttribute(Exception.class)));
         /*当前存在事务就使用当前事务，当前不存在事务就创建一个新的事务*/
-        requiredTx.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        RuleBasedTransactionAttribute requiredTx =
+                new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED,
+                        Collections.singletonList(new RollbackRuleAttribute(Exception.class)));
+        requiredTx.setReadOnly(false);
         txMap.put("*Trx", requiredTx);
 
         RuleBasedTransactionAttribute supportTrx = new RuleBasedTransactionAttribute();
@@ -140,13 +154,7 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
         return interceptor;
     }
 
-   /*@Bean
-    public Advisor testIn() {
-        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        // 拦截所有
-        pointcut.setExpression("execution(* com.baomidou.springboot.services.*.*(..))");
-        return new DefaultPointcutAdvisor(pointcut, trxAndSupport());
-    }*/
+    // ============= 事务配置 END
 
     @Bean
     public GzipFilter gzipFilter() {

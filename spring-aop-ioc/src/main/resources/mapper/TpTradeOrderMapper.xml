@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.baomidou.springboot.mapper.TradeOrderMapper">
     <select id="selectById" parameterType="java.lang.Long" resultType="com.baomidou.springboot.entity.TpTradeOrder">
-        select *
+        select id,trade_status,hello,updated_time,created_time,created_by,updated_by
         from tp_trade_order
         where id = #{id,jdbcType=BIGINT}
     </select>

@@ -5,6 +5,7 @@ import com.baomidou.springboot.entity.TpTradeOrder;
 import com.baomidou.springboot.mapper.TradeOrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,76 +21,74 @@ import java.time.LocalDateTime;
 public class TradeOrderServiceImpl implements TradeOrderService {
     @Autowired
     protected TradeOrderMapper mapper;
-    @Autowired
-    protected TradeOrderService service;
 
     @Override
-    public void save(TpTradeOrder order) {
-        order = new TpTradeOrder();
-        order.setId(11223344L);
+    public void save(Long id) {
+        TpTradeOrder order = new TpTradeOrder();
+        order.setId(id);
         // 1 待支付，2支付中，3支付成功，4支付失败，5支付关闭
         order.setTradeStatus("1");
+        order.setHello("随意1");
+        order.setCreatedBy("创建者1");
+        order.setUpdatedBy("修改者1");
         mapper.insertSelective(order);
     }
 
+
     @Override
-    public void updateTrx(TpTradeOrder order) {
+    public void updateTrx(TpTradeOrder order, Boolean throwException) {
         mapper.updateByPrimaryKeySelective(order);
-        int i = 1 / 0;
+        if (throwException) {
+            int i = 1 / 0;
+        }
+    }
+
+
+    @Override
+    public void doBiz1NoException() {
+        Long id = RandomUtils.nextLong();
+        save(id);
+        doBiz11(id, Boolean.FALSE);
+        doBiz12(id, Boolean.FALSE);
     }
 
     @Override
-    public TpTradeOrder select(Long id) {
-        return mapper.selectById(id);
+    public void doBiz1NoExceptionTrx() {
+        Long id = RandomUtils.nextLong();
+        doBiz11(id, Boolean.FALSE);
     }
 
-    @Override
-    public void doBiz11() {
-        TpTradeOrder order = service.select(11223344L);
-        log.info("==========doBiz11 service01:{}", service);
+    private void doBiz11(Long id, Boolean throwException) {
+        TpTradeOrder order = mapper.selectById(id);
         log.info("第1次为待支付:{}", JSON.toJSONString(order));
         // 1 待支付，2支付中，3支付成功，4支付失败，5支付关闭
-        if ("1".equals(order.getTradeStatus())) {
+        if (StringUtils.equals("1", order.getTradeStatus())) {
             TpTradeOrder newOrder = new TpTradeOrder();
             newOrder.setId(order.getId());
             newOrder.setTradeStatus("2");
             newOrder.setHello("随意2");
-            log.info("==========doBiz11 service02:{}", service);
+            newOrder.setCreatedBy("创建者2");
+            newOrder.setUpdatedBy("修改者2");
             TradeOrderService service1 = (TradeOrderService) AopContext.currentProxy();
-            service1.updateTrx(newOrder);
-            log.info("==========doBiz11 service03:{}", AopContext.currentProxy());
+            service1.updateTrx(newOrder, throwException);
         }
     }
 
-    @Override
-    public void doBiz12() {
-        TpTradeOrder order = service.select(11223344L);
-        log.info("==========doBiz12 service01:{}", service);
+    private void doBiz12(Long id, Boolean throwException) {
+        TpTradeOrder order = mapper.selectById(id);
         log.info("第2次为支付中:{}", JSON.toJSONString(order));
         // 1 待支付，2支付中，3支付成功，4支付失败，5支付关闭
-        if ("2".equals(order.getTradeStatus())) {
+        if (StringUtils.equals("2", order.getTradeStatus())) {
             TpTradeOrder newOrder = new TpTradeOrder();
             newOrder.setId(order.getId());
             newOrder.setTradeStatus("3");
             newOrder.setHello("随意3");
-            log.info("==========doBiz12 service:{}", service);
-            TradeOrderService service1 = (TradeOrderService) this;
-            service1.updateTrx(newOrder);
-            log.info("==========doBiz11 service03:{}", AopContext.currentProxy());
+            newOrder.setUpdatedBy("修改者");
+            TradeOrderService service1 = (TradeOrderService) AopContext.currentProxy();
+            service1.updateTrx(newOrder, throwException);
         }
     }
 
-    @Override
-    public void doBiz1() {
-        service.doBiz11();
-        service.doBiz12();
-    }
-
-    @Override
-    public void doBiz1Trx() {
-        service.doBiz11();
-        service.doBiz12();
-    }
 
     /**
      * doBiz5TrxAndThis 没有设置事务，updateTrx 设置了事务，doBiz5TrxAndThis 调用 updateTrx 时，updateTrx 事务失效
@@ -112,12 +111,12 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         // 【事务失效】外层没有事务,this指自己本身不是代理类 ,强转仍然不是代理类
         TradeOrderService service1 = (TradeOrderService) this;
         log.info("==========doBiz5TrxAndThis service1:{}", service1);
-        service1.updateTrx(order2);
+        service1.updateTrx(order2, true);
 
         // 修改成如下调用，事务生效
         TradeOrderService service2 = (TradeOrderService) AopContext.currentProxy();
         log.info("==========doBiz5TrxAndThis proxy   :{}", service2);
-        //service2.updateTrx(order2);
+        //service2.updateTrx(order2, true);
     }
 
     @Override
@@ -143,7 +142,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         // 外层也【有事务】,this则指proxy代理类本身，事务生效
         TradeOrderService service2 = (TradeOrderService) this;
         log.info("==========doBiz5TrxAndThisTrx service2:{}", service2);
-        this.updateTrx(order2);
-        //service1.updateTrx(order);
+        this.updateTrx(order2, true);
+        //service1.updateTrx(order,true);
     }
 }
