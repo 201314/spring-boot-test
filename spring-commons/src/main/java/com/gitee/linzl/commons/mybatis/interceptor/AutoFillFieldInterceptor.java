@@ -3,6 +3,7 @@ package com.gitee.linzl.commons.mybatis.interceptor;
 import com.gitee.linzl.commons.api.BaseEntity;
 import com.gitee.linzl.commons.mybatis.service.OptUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -92,11 +93,15 @@ public class AutoFillFieldInterceptor implements Interceptor {
         if (param instanceof BaseEntity) {
             BaseEntity entity = (BaseEntity) param;
             if (SqlCommandType.INSERT.equals(sqlCommandType)) {
-                entity.setCreatedBy(optUserService.getUserId());
+                if (StringUtils.isBlank(entity.getCreatedBy())){
+                    entity.setCreatedBy(optUserService.getUserId());
+                }
                 entity.setCreatedTime(LocalDateTime.now());
             }
             if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
-                entity.setUpdatedBy(optUserService.getUserId());
+                if (StringUtils.isBlank(entity.getUpdatedBy())){
+                    entity.setUpdatedBy(optUserService.getUserId());
+                }
                 entity.setUpdatedTime(LocalDateTime.now());
             }
         }
