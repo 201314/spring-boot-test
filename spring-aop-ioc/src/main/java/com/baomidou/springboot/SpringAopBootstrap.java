@@ -79,8 +79,13 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
         configurationCustomizers.add(new ConfigurationCustomizer() {
             @Override
             public void customize(Configuration configuration) {
-                // Session一级缓存【关闭】
+                // Session一级缓存【关闭】，只要命中索引，查询很快
                 configuration.setLocalCacheScope(LocalCacheScope.STATEMENT);
+                // 关闭二级缓存，缓存由一个Map保存，容量有限且没有过期管理
+                configuration.setCacheEnabled(Boolean.FALSE);
+                // 使用驼峰命名法转换字段,此时数据库可以直接映射到Entity字段
+                configuration.setMapUnderscoreToCamelCase(Boolean.TRUE);
+
             }
         });
         return configurationCustomizers;

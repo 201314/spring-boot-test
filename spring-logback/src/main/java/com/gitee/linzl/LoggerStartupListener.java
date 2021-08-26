@@ -31,7 +31,10 @@ public class LoggerStartupListener extends ContextAwareBase implements LoggerCon
         if (Objects.isNull(profile)) {
             profile = "PRODUCTION";
         }
-        //projectName,profiles,clusterName
+        /**
+         * 项目logback-spring.xml可以通过 ${} 获取
+         * projectName,profiles,clusterName
+         */
         Context context = getContext();
         context.putProperty("ACTIVE_PROFILE", profile);
         context.putObject("projectName", "日志");

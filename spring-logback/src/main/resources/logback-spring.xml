@@ -4,78 +4,137 @@
 	<!-- 在spring-boot-版本.jar 如果使用以下include,默认配置了Console输出 -->
 	<!-- <include resource="org/springframework/boot/logging/logback/base.xml" 
 		/> -->
+	<!-- -->
+	<contextListener class="com.gitee.linzl.LoggerStartupListener"/>
 
 	<!--设置上下文名称,用于区分不同应用程序的记录。一旦设置不能修改, 可以通过%contextName来打印日志上下文名称 -->
-	<contextName>spring-logback-context</contextName>
-	<!--application.yml 传递参数，不能使用logback 自带的<property>标签 -->
-	<springProperty scope="context" name="appname"
-		source="spring.application.name" defaultValue="spring-logback" />
+	<contextName>spring-logback</contextName>
+	<!-- 读取application.yml 传递参数，不能使用logback 自带的<property>标签 -->
+	<springproperty scope="context" name="appname" source="spring.application.name" defaultValue="spring-logback" />
 	<property name="log.path" value="./logs" />
+	<property name="logLevel" value="DEBUG"/>
+	<property name="maxFileSize" value="2048MB"/>
+	<property name="maxHistory" value="30"/>
+	<property name="totalSizeCap" value="20GB"/>
+	<property name="errorLogFile" value="${appname}_err"/>
+	<property name="bizLogFile" value="${appname}_biz"/>
+	<property name="ioLogFile" value="${appname}_io"/>
+	<property name="monitorLogFile" value="${appname}_monitor"/>
+	<property name="allLogFile" value="${appname}_all"/>
+	<property name="logPattern"
+			  value="%d{yyyy-MM-dd HH:mm:ss.SSS}|%contextName|%thread|%X{tid}|%-5level|%logger{36}|%msg%n"/>
 
 	<!--输出到控制台 ConsoleAppender 不配置root采用默认console输出 -->
 	<appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<pattern>
-				<pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level
-					%logger{36}-%msg%n</pattern>
+				<pattern>${logPattern}</pattern>
 			</pattern>
 		</layout>
 	</appender>
 
-	<!--输出到文件 RollingFileAppender -->
-	<appender name="fileDebugLog"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<File>${log.path}/${appname}.log</File>
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${log.path}/${appname}.%d{yyyy-MM-dd}.%i.log
-			</fileNamePattern>
-			<!-- 单个日志文件最多 1000MB, 30天的日志周期，最大不能超过20GB -->
-			<timeBasedFileNamingAndTriggeringPolicy
-				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>1000MB</maxFileSize>
-			</timeBasedFileNamingAndTriggeringPolicy>
-			<maxHistory>30</maxHistory>
-			<totalSizeCap>20GB</totalSizeCap>
-		</rollingPolicy>
-		<encoder>
-			<charset>UTF-8</charset>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %line-%msg%n
-			</pattern>
-		</encoder>
-	</appender>
-
-	<!--输出到文件 RollingFileAppender error信息单独归档 -->
-	<appender name="fileErrorLog"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<!--过滤日志，仅记录error日志 -->
+	<!--输出到文件 RollingFileAppender biz信息单独归档 -->
+	<appender name="fileBizLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.path}/${bizLogFile}.log</File>
+		<!--记录logLevel日志 -->
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>Error</level>
+			<level>${logLevel}</level>
 		</filter>
-		<File>${log.path}/${appname}.error.log</File>
+		<!-- 过滤掉Error日志-->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+		</filter>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${log.path}/${appname}.error.%d{yyyy-MM-dd}.%i.log
-			</fileNamePattern>
+			<fileNamePattern>${log.path}/${bizLogFile}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 			<!-- 单个日志文件最多 1000MB, 30天的日志周期，最大不能超过20GB -->
-			<timeBasedFileNamingAndTriggeringPolicy
-				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>1000MB</maxFileSize>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${maxFileSize}</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
-			<maxHistory>30</maxHistory>
-			<totalSizeCap>20GB</totalSizeCap>
+			<maxHistory>${maxHistory}</maxHistory>
+			<totalSizeCap>${totalSizeCap}</totalSizeCap>
 		</rollingPolicy>
 		<!--日志输出编码格式化 -->
 		<encoder>
 			<charset>UTF-8</charset>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %line -
-				%msg%n</pattern>
+			<pattern>${logPattern}</pattern>
 		</encoder>
 	</appender>
 
-	<logger name="com.gitee.linzl" level="DEBUG" additivity="true" />
+	<!--输出到文件 RollingFileAppender error信息单独归档 -->
+	<appender name="fileErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.path}/${errorLogFile}.log</File>
+		<!--过滤日志，仅记录error日志 -->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>Error</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/${errorLogFile}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<!-- 单个日志文件最多 1000MB, 30天的日志周期，最大不能超过20GB -->
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${maxFileSize}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>${maxHistory}</maxHistory>
+			<totalSizeCap>${totalSizeCap}</totalSizeCap>
+		</rollingPolicy>
+		<!--日志输出编码格式化 -->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${logPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<!--输出到文件 RollingFileAppender io信息单独归档 -->
+	<appender name="fileIOLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.path}/${ioLogFile}.log</File>
+		<!--记录logLevel日志 -->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>${logLevel}</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/${ioLogFile}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<!-- 单个日志文件最多 1000MB, 30天的日志周期，最大不能超过20GB -->
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${maxFileSize}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>${maxHistory}</maxHistory>
+			<totalSizeCap>${totalSizeCap}</totalSizeCap>
+		</rollingPolicy>
+		<!--日志输出编码格式化 -->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${logPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<!--输出到文件 RollingFileAppender io信息单独归档 -->
+	<appender name="fileMonitorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.path}/${monitorLogFile}.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/${monitorLogFile}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<!-- 单个日志文件最多 1000MB, 30天的日志周期，最大不能超过20GB -->
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${maxFileSize}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>${maxHistory}</maxHistory>
+			<totalSizeCap>${totalSizeCap}</totalSizeCap>
+		</rollingPolicy>
+		<!--日志输出编码格式化 -->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${logPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.gitee.linzl" level="DEBUG" additivity="false" >
+		<appender-ref ref="consoleLog" />
+	</logger>
 
 	<root level="info">
 		<appender-ref ref="consoleLog" />
-		<appender-ref ref="fileDebugLog" />
+		<appender-ref ref="fileBizLog" />
 		<appender-ref ref="fileErrorLog" />
+		<appender-ref ref="fileIOLog" />
+		<appender-ref ref="fileMonitorLog" />
 	</root>
 </configuration>
