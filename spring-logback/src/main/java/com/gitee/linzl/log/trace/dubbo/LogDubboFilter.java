@@ -105,7 +105,7 @@ public class LogDubboFilter implements Filter {
                 remoteApp);
     }
 
-    private static String point = ".";
+    private static String DOT = ".";
 
     /**
      * 可参考 ch.qos.logback.classic.pattern.TargetLengthBasedClassNameAbbreviator#abbreviate(java.lang.String)
@@ -117,7 +117,7 @@ public class LogDubboFilter implements Filter {
             return StringUtils.EMPTY;
         }
         StringBuffer sb = new StringBuffer();
-        int count = StringUtils.countMatches(clsName, point) + 1;
+        int count = StringUtils.countMatches(clsName, DOT) + 1;
         int lastCount = count - 1;
         int pointIndex = 0;
         for (int i = 0; i < count; i++) {
@@ -125,9 +125,9 @@ public class LogDubboFilter implements Filter {
                 sb.append(StringUtils.substring(clsName, pointIndex, clsName.length()));
             } else {
                 String temp = StringUtils.substring(clsName, pointIndex, pointIndex + 1);
-                sb.append(StringUtils.equals(temp, point) ? StringUtils.EMPTY : temp)
-                        .append(point);
-                pointIndex = StringUtils.indexOf(clsName, point, pointIndex) + 1;
+                sb.append(StringUtils.equals(temp, DOT) ? StringUtils.EMPTY : temp)
+                        .append(DOT);
+                pointIndex = StringUtils.indexOf(clsName, DOT, pointIndex) + 1;
             }
         }
         return sb.toString();
