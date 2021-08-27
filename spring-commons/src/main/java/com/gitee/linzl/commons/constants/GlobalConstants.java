@@ -40,4 +40,9 @@ public class GlobalConstants {
      */
     public static final String AJAX_HEADER_NAME = "X-Requested-With";
     public static final String AJAX_HEADER_VALUE = "XMLHttpRequest";
+
+    /**
+     * 链路跟踪ID
+     */
+    public static final String TRACE_ID = "traceId";
 }

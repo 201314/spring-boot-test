@@ -17,8 +17,6 @@ public class LogTraceIdRest {
 
     @GetMapping
     public ApiResult<String> testTradeId() {
-        MDC.put("tid", UUID.randomUUID().toString().replace("-", ""));
-
         StringBuffer sb = new StringBuffer();
         sb.append("打印日志,链接追踪");
         log.info("错误日志：" + sb);

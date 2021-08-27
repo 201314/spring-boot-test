@@ -22,7 +22,7 @@
 	<property name="monitorLogFile" value="${appname}_monitor"/>
 	<property name="allLogFile" value="${appname}_all"/>
 	<property name="logPattern"
-			  value="%d{yyyy-MM-dd HH:mm:ss.SSS}|%contextName|%thread|%X{tid}|%-5level|%logger{36}|%msg%n"/>
+			  value="%d{yyyy-MM-dd HH:mm:ss.SSS}|%contextName|%thread|%X{traceId}|%-5level|%logger{36}|%msg%n"/>
 
 	<!--输出到控制台 ConsoleAppender 不配置root采用默认console输出 -->
 	<appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
