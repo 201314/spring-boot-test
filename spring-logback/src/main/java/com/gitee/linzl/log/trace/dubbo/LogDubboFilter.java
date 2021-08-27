@@ -85,8 +85,8 @@ public class LogDubboFilter implements Filter {
     }
 
     private void monitorLog(Invoker invoker, Invocation invocation, Long elapsed, Result result, String rpcStatus) {
-        // localIp | localApp | traceId | interface#method | status | remoteIp |remoteApp
-        String logPattern = "{}|{}|{}|{}#{}|{}|{}|{}";
+        // localIp | localApp | traceId | interface#method | status | 耗时elapsed | remoteIp |remoteApp
+        String logPattern = "{}|{}|{}|{}#{}|{}|{}ms|{}|{}";
         // 生产者IP(自己)
         String localIp = NetUtils.getLocalHost();
         // 应用名称
@@ -101,7 +101,8 @@ public class LogDubboFilter implements Filter {
         RpcContext context = RpcContext.getContext();
         String remoteIp = context.getRemoteHost();
         String remoteApp = invocation.getAttachment(CommonConstants.APPLICATION_KEY, "");
-        monitorLog.info(logPattern, localIp, localApp, traceId, interfaceName, methodName, status, remoteIp, remoteApp);
+        monitorLog.info(logPattern, localIp, localApp, traceId, interfaceName, methodName, status, elapsed, remoteIp,
+                remoteApp);
     }
 
     private static String point = ".";
