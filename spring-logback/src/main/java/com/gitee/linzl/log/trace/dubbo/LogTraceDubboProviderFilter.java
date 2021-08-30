@@ -39,6 +39,8 @@ public class LogTraceDubboProviderFilter implements Filter {
             result = invoker.invoke(invocation);
         } catch (RpcException e) {
             ex = e;
+        } finally {
+            MDC.remove(GlobalConstants.TRACE_ID);
         }
 
         if (Objects.nonNull(ex)) {

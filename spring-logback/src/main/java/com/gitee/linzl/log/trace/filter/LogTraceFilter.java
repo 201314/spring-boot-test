@@ -34,5 +34,6 @@ public class LogTraceFilter extends OncePerRequestFilter {
         }
         MDC.put(GlobalConstants.TRACE_ID, traceID);
         filterChain.doFilter(request, response);
+        MDC.remove(GlobalConstants.TRACE_ID);
     }
 }
