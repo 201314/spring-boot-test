@@ -2,12 +2,12 @@ package com.gitee.linzl.commons.tools;
 
 import com.gitee.linzl.commons.mybatis.annotation.Encrypted;
 import com.gitee.linzl.commons.mybatis.service.CryptService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -110,13 +110,12 @@ public class EncryptUtil {
             if (Objects.isNull(encryptField)) {
                 return;
             }
-            String value = String.valueOf(this.getField(encryptField, entity));
-            if (StringUtils.isEmpty(value)) {
+            Object filedValue = this.getField(encryptField, entity);
+            if (Objects.isNull(filedValue)) {
                 return;
             }
-
             ReflectionUtils.makeAccessible(field);
-            ReflectionUtils.setField(field, entity, getConversionService().convert(cryptService.decrypt(value),
+            ReflectionUtils.setField(field, entity, getConversionService().convert(cryptService.decrypt(String.valueOf(filedValue)),
                     field.getType()));
         });
     }
