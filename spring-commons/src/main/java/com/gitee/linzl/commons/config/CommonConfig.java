@@ -11,13 +11,6 @@ import com.gitee.linzl.commons.constants.GlobalConstants;
 import com.gitee.linzl.commons.fileupload.CustomMultipartResolver;
 import com.gitee.linzl.commons.interceptor.DefaultPermissionTokenInterceptor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.connector.Connector;
-import org.apache.catalina.startup.Tomcat;
-import org.apache.coyote.AbstractProtocol;
-import org.apache.coyote.ProtocolHandler;
-import org.apache.coyote.UpgradeProtocol;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -26,16 +19,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-import javax.servlet.Servlet;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
@@ -160,7 +154,7 @@ public class CommonConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 描述 : 国际化拦截器
+     * 描述 : 国际化拦截器，配合SessionLocaleResolver或 CookieLocaleResolver使用
      * <p>
      * 如果是需要在界面上进行切换国际化，根据 url?local=国际化语言标识 自动国际化
      * <p>
@@ -169,7 +163,7 @@ public class CommonConfig implements WebMvcConfigurer {
      * @return
      */
     @Bean
-    public HandlerInterceptorAdapter localeChangeInterceptor() {
+    public HandlerInterceptor localeChangeInterceptor() {
         if (log.isDebugEnabled()) {
             log.debug("初始化国际化拦截器,url?local=语言标识");
         }
@@ -179,6 +173,11 @@ public class CommonConfig implements WebMvcConfigurer {
         // 忽略无效的语言
         localeChangeInterceptor.setIgnoreInvalidLocale(true);
         return localeChangeInterceptor;
+    }
+
+    @Bean(DispatcherServlet.LOCALE_RESOLVER_BEAN_NAME)
+    public LocaleResolver localeResolver() {
+        return new CookieLocaleResolver();
     }
 
     /**
@@ -217,6 +216,6 @@ public class CommonConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(this.tokenInterceptor()).addPathPatterns("/**")
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
-//		registry.addInterceptor(new ControllerValidatorInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(this.localeChangeInterceptor()).addPathPatterns("/**");
     }
 }
