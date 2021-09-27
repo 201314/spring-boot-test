@@ -1,4 +1,4 @@
-package com.gitee.linzl.commons.fastjson;
+package com.gitee.linzl.commons.tools;
 
 import org.apache.commons.lang3.StringUtils;
 

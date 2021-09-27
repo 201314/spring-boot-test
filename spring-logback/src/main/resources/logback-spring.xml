@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+	<conversionRule conversionWord="h" converterClass="com.gitee.linzl.log.mask.logback.HostNameConverter" />
+	<conversionRule conversionWord="hostName" converterClass="com.gitee.linzl.log.mask.logback.HostNameConverter" />
+
+	<!-- 使用以下替换默认做数据脱敏处理 -->
+	<conversionRule conversionWord="m" converterClass="com.gitee.linzl.log.mask.logback.ComplexMessageConverter" />
+	<conversionRule conversionWord="msg" converterClass="com.gitee.linzl.log.mask.logback.ComplexMessageConverter" />
+	<conversionRule conversionWord="message" converterClass="com.gitee.linzl.log.mask.logback.ComplexMessageConverter" />
+
 	<jmxConfigurator />
 	<!-- 在spring-boot-版本.jar 如果使用以下include,默认配置了Console输出 -->
 	<!-- <include resource="org/springframework/boot/logging/logback/base.xml" 
 		/> -->
 	<!-- -->
-	<contextListener class="com.gitee.linzl.LoggerStartupListener"/>
+	<contextListener class="com.gitee.linzl.log.mask.logback.LoggerStartupListener"/>
 
 	<!--设置上下文名称,用于区分不同应用程序的记录。一旦设置不能修改, 可以通过%contextName来打印日志上下文名称 -->
 	<contextName>spring-logback</contextName>
@@ -22,7 +30,7 @@
 	<property name="monitorLogFile" value="${appname}_monitor"/>
 	<property name="allLogFile" value="${appname}_all"/>
 	<property name="logPattern"
-			  value="%d{yyyy-MM-dd HH:mm:ss.SSS}|%contextName|%thread|%X{traceId}|%-5level|%logger{36}|%msg%n"/>
+			  value="%d{yyyy-MM-dd HH:mm:ss.SSS}|%-5level|%contextName|%thread|%X{traceId}|%logger{36}|%msg%n"/>
 
 	<!--输出到控制台 ConsoleAppender 不配置root采用默认console输出 -->
 	<appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
@@ -55,9 +63,7 @@
 			<totalSizeCap>${totalSizeCap}</totalSizeCap>
 		</rollingPolicy>
 		<!--日志输出编码格式化 -->
-		<encoder>
-			<charset>UTF-8</charset>
-			<pattern>${logPattern}</pattern>
+		<encoder class="com.gitee.linzl.log.mask.logback.CommonPatternLayoutEncoder">
 		</encoder>
 	</appender>
 
@@ -78,9 +84,7 @@
 			<totalSizeCap>${totalSizeCap}</totalSizeCap>
 		</rollingPolicy>
 		<!--日志输出编码格式化 -->
-		<encoder>
-			<charset>UTF-8</charset>
-			<pattern>${logPattern}</pattern>
+		<encoder class="com.gitee.linzl.log.mask.logback.CommonPatternLayoutEncoder">
 		</encoder>
 	</appender>
 
@@ -101,9 +105,7 @@
 			<totalSizeCap>${totalSizeCap}</totalSizeCap>
 		</rollingPolicy>
 		<!--日志输出编码格式化 -->
-		<encoder>
-			<charset>UTF-8</charset>
-			<pattern>${logPattern}</pattern>
+		<encoder class="com.gitee.linzl.log.mask.logback.CommonPatternLayoutEncoder">
 		</encoder>
 	</appender>
 
@@ -120,14 +122,12 @@
 			<totalSizeCap>${totalSizeCap}</totalSizeCap>
 		</rollingPolicy>
 		<!--日志输出编码格式化 -->
-		<encoder>
-			<charset>UTF-8</charset>
-			<pattern>${logPattern}</pattern>
+		<encoder class="com.gitee.linzl.log.mask.logback.CommonPatternLayoutEncoder">
 		</encoder>
 	</appender>
 
 	<logger name="com.gitee.linzl" level="DEBUG" additivity="false" >
-		<appender-ref ref="consoleLog" />
+		<appender-ref ref="fileBizLog" />
 	</logger>
 
 	<root level="info">

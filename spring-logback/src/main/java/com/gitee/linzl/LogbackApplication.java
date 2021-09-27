@@ -1,14 +1,13 @@
 package com.gitee.linzl;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.time.Duration;
-
+import ch.qos.logback.classic.helpers.MDCInsertingServletFilter;
+import com.alibaba.fastjson.JSON;
+import com.gitee.linzl.commons.filter.gzip.GzipFilter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSON;
-
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.time.Duration;
 
 @SpringBootApplication
 @Slf4j
@@ -62,5 +62,19 @@ public class LogbackApplication {
 		}
 		// TODO 处理文件内容...
 		return "OK";
+	}
+
+	@Bean
+	public MDCInsertingServletFilter mdcFilter() {
+		return new MDCInsertingServletFilter();
+	}
+
+	@Bean
+	public FilterRegistrationBean<MDCInsertingServletFilter> filterRegistrationBean() {
+		FilterRegistrationBean<MDCInsertingServletFilter> registration = new FilterRegistrationBean<>();
+		registration.setFilter(mdcFilter());
+		registration.addUrlPatterns("/*");
+		registration.setName("mdcFilter");
+		return registration;
 	}
 }

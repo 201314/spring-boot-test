@@ -1,12 +1,11 @@
-package com.gitee.linzl.commons.fastjson;
+package com.gitee.linzl.log.mask.fastjson;
 
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.ObjectSerializer;
+import com.gitee.linzl.commons.tools.MaskSensitiveUtil;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 /**

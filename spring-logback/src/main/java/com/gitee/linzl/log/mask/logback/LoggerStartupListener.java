@@ -1,4 +1,4 @@
-package com.gitee.linzl;
+package com.gitee.linzl.log.mask.logback;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -13,6 +13,8 @@ import java.util.Objects;
 
 /**
  * 可以通过监听，从阿波罗获取配置
+ * <p>
+ * ch.qos.logback.classic.joran.JoranConfigurator 配置了所有XML解析的东西
  *
  * @author linzhenlie
  * @date 2019/9/30
@@ -29,17 +31,17 @@ public class LoggerStartupListener extends ContextAwareBase implements LoggerCon
 
         String profile = System.getenv("ACTIVE_PROFILE");
         if (Objects.isNull(profile)) {
-            profile = "PRODUCTION";
+            profile = System.getenv("spring.profiles.active");
+        }
+        if (Objects.isNull(profile)) {
+            profile = "default";
         }
         /**
          * 项目logback-spring.xml可以通过 ${} 获取
          * projectName,profiles,clusterName
          */
         Context context = getContext();
-        context.putProperty("ACTIVE_PROFILE", profile);
-        context.putObject("projectName", "日志");
-        context.putObject("profiles", "开发");
-        context.putObject("clusterName", "无集群");
+        context.putObject("profiles", profile);
         isStarted = true;
     }
 

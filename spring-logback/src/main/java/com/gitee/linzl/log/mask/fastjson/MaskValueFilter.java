@@ -1,4 +1,4 @@
-package com.gitee.linzl.commons.fastjson;
+package com.gitee.linzl.log.mask.fastjson;
 
 import com.alibaba.fastjson.serializer.ValueFilter;
 import lombok.extern.slf4j.Slf4j;
@@ -81,10 +81,5 @@ public class MaskValueFilter implements ValueFilter {
                     .concat(StringUtils.right(columnVal, right));
         }
         return columnVal;
-    }
-
-    public static void main(String[] args) {
-        String str = "138****1234";
-        System.out.println(replace(str,3,4,"*"));
     }
 }

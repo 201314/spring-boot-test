@@ -1,4 +1,4 @@
-package com.gitee.linzl.commons.fastjson;
+package com.gitee.linzl.log.mask.fastjson;
 
 import org.springframework.core.annotation.AliasFor;
 
@@ -12,12 +12,12 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @MaskSensitiveField
-public @interface MaskIdCard {
+public @interface MaskMobile {
     @AliasFor(annotation = MaskSensitiveField.class)
-    int left() default 1;
+    int left() default 3;
 
     @AliasFor(annotation = MaskSensitiveField.class)
-    int right() default 1;
+    int right() default 4;
 
     @AliasFor(annotation = MaskSensitiveField.class)
     String padding() default "*";

@@ -1,4 +1,4 @@
-package com.gitee.linzl;
+package com.gitee.linzl.log.mask.logback;
 
 /**
  * 对于regex匹配成功的字符串，如何处理
