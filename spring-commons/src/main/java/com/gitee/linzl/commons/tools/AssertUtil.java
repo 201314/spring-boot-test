@@ -27,9 +27,9 @@ public abstract class AssertUtil {
         }
     }
 
-    public static void isTrue(boolean expression, IBaseErrorCode message, String printLog) {
+    public static void isTrue(boolean expression, IBaseErrorCode message, String printLog, Object... args) {
         if (!expression) {
-            log.error(printLog);
+            log.error(String.format(printLog, args));
             throw new BusinessException(message);
         }
     }
@@ -40,9 +40,9 @@ public abstract class AssertUtil {
         }
     }
 
-    public static void isNull(Object object, IBaseErrorCode message, String printLog) {
+    public static void isNull(Object object, IBaseErrorCode message, String printLog, Object... args) {
         if (Objects.nonNull(object)) {
-            log.error(printLog);
+            log.error(String.format(printLog, args));
             throw new BusinessException(message);
         }
     }
@@ -53,9 +53,9 @@ public abstract class AssertUtil {
         }
     }
 
-    public static void notNull(Object object, IBaseErrorCode message, String printLog) {
+    public static void notNull(Object object, IBaseErrorCode message, String printLog, Object... args) {
         if (Objects.isNull(object)) {
-            log.error(printLog);
+            log.error(String.format(printLog, args));
             throw new BusinessException(message);
         }
     }
@@ -66,9 +66,9 @@ public abstract class AssertUtil {
         }
     }
 
-    public static void notEmpty(String text, IBaseErrorCode message, String printLog) {
+    public static void notEmpty(String text, IBaseErrorCode message, String printLog, Object... args) {
         if (!StringUtils.hasLength(text)) {
-            log.error(printLog);
+            log.error(String.format(printLog, args));
             throw new BusinessException(message);
         }
     }
@@ -79,9 +79,9 @@ public abstract class AssertUtil {
         }
     }
 
-    public static void notEmpty(Object[] array, IBaseErrorCode message, String printLog) {
+    public static void notEmpty(Object[] array, IBaseErrorCode message, String printLog, Object... args) {
         if (ObjectUtils.isEmpty(array)) {
-            log.error(printLog);
+            log.error(String.format(printLog, args));
             throw new BusinessException(message);
         }
     }
@@ -92,9 +92,9 @@ public abstract class AssertUtil {
         }
     }
 
-    public static void notEmpty(Collection<?> collection, IBaseErrorCode message, String printLog) {
+    public static void notEmpty(Collection<?> collection, IBaseErrorCode message, String printLog, Object... args) {
         if (CollectionUtils.isEmpty(collection)) {
-            log.error(printLog);
+            log.error(String.format(printLog, args));
             throw new BusinessException(message);
         }
     }
@@ -105,9 +105,9 @@ public abstract class AssertUtil {
         }
     }
 
-    public static void notEmpty(Map<?, ?> map, IBaseErrorCode message, String printLog) {
+    public static void notEmpty(Map<?, ?> map, IBaseErrorCode message, String printLog, Object... args) {
         if (CollectionUtils.isEmpty(map)) {
-            log.error(printLog);
+            log.error(String.format(printLog, args));
             throw new BusinessException(message);
         }
     }
