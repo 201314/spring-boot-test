@@ -5,6 +5,7 @@ import org.springframework.util.CollectionUtils;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.groups.Default;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -16,6 +17,10 @@ import java.util.*;
  */
 public class ValidatorUtil {
     private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+    public static <T> Map<String, String> validate(T obj) {
+        return validate(obj, Default.class);
+    }
 
     /**
      * 验证并以Map方式返回错误信息
