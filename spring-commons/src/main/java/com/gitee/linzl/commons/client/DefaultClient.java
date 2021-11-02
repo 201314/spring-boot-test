@@ -2,6 +2,9 @@ package com.gitee.linzl.commons.client;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.api.BaseApiRequest;
 import com.gitee.linzl.commons.api.BaseApiResponse;
@@ -10,6 +13,7 @@ import com.gitee.linzl.commons.cipher.DefaultCipher;
 import com.gitee.linzl.commons.cipher.ICipher;
 import com.gitee.linzl.commons.exception.ApiException;
 import com.gitee.linzl.commons.tools.AesUtils;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,6 +37,7 @@ public class DefaultClient {
     private final ClientProperties properties;
     private final ICipher cipher;
     private final IHttpClient client;
+    private ObjectMapper objectMapper;
 
     /**
      * @param serverUrl
@@ -44,12 +50,14 @@ public class DefaultClient {
         this.properties = properties;
         this.cipher = new DefaultCipher(properties);
         this.client = new DefaultHttpClient();
+        this.objectMapper = new ObjectMapper();
     }
 
     public <T extends BaseApiResponse> ApiResult<T> execute(BaseApiRequest<T> request) throws ApiException {
         return doExecute(request);
     }
 
+    @SneakyThrows
     private <T extends BaseApiResponse> ApiResult<T> doExecute(BaseApiRequest<T> request) throws ApiException {
         // 1.加密
         String bizContent = JSON.toJSONString(request);
@@ -94,8 +102,8 @@ public class DefaultClient {
         }
 
         // 4.响应验签
-        JSONObject jo = JSONObject.parseObject(result);
-        ApiResult<String> resp = jo.toJavaObject(ApiResult.class);
+        ApiResult<String> resp = objectMapper.readValue(result, new TypeReference<ApiResult<String>>() {
+        });
 
         ApiResult<T> response = ApiResult.of();
         response.setStatus(resp.isStatus());
@@ -103,7 +111,8 @@ public class DefaultClient {
         response.setMsg(resp.getMsg());
         if (resp.isSuccess()) {
             // 成功才需要验签
-            Map<String, Object> map = jo.getInnerMap();
+            JavaType javaType = objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class);
+            Map<String, Object> map = objectMapper.readValue(result, javaType);
             cipher.verify(map, this.signType);
             String realResp = resp.getData();
             // 5.解密,部分接口只返回成功标识
@@ -116,7 +125,7 @@ public class DefaultClient {
                 ParameterizedType parameterizedType = (ParameterizedType) request.getClass().getGenericSuperclass();
                 Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
                 Class<T> respCls = (Class) actualTypeArguments[0];
-                T t = (T) JSON.parseObject(realResp, respCls);
+                T t = objectMapper.readValue(realResp, respCls);
                 response.setData(t);
             }
         }
