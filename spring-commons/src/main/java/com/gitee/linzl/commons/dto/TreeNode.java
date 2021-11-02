@@ -1,6 +1,5 @@
 package com.gitee.linzl.commons.dto;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.gitee.linzl.commons.constants.GlobalConstants;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,31 +21,25 @@ public class TreeNode {
     /**
      * 树结点ID
      */
-    @JSONField(ordinal = 0)
     private String nodeId;
     /**
      * 树结点父ID
      */
-    @JSONField(ordinal = 1)
     private String nodePid;
     /**
      * 树结构名称
      */
-    @JSONField(ordinal = 2)
     private String label;
     /**
      * 节点的类型
      */
-    @JSONField(ordinal = 3)
     private String type;
 
     /**
      * 是否禁用节点,true表示禁用
      */
-    @JSONField(ordinal = 4)
     private boolean disabled = false;
 
-    @JSONField(ordinal = 5)
     private List<TreeNode> children = new LinkedList<>();
 
     /**
