@@ -65,7 +65,7 @@ public class CommonConfig implements WebMvcConfigurer {
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         log.debug("extendMessageConverters========>extendMessageConverters");
         if (jackSonPresent) {
-            //如果有JackSon,优先使用
+            log.debug("如果有JackSon,优先使用");
             return;
         }
 

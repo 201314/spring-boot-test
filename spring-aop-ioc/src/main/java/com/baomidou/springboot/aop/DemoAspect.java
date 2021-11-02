@@ -70,9 +70,8 @@ public class DemoAspect {
             String parameter = enumeration.nextElement();
             parameterMap.put(parameter, request.getParameter(parameter));
         }
-        String str = "{'name':'阅读aspect'}";
         if (obj.length > 0) {
-            System.out.println("请求的参数信息为：" + str);
+            System.out.println("请求的参数信息为：" + parameterMap);
         }
     }
 
