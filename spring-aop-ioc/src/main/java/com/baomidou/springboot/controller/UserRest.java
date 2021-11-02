@@ -29,6 +29,7 @@ public class UserRest {
      * 分页 PAGE
      */
     @PostMapping("/test")
+    @Performance
     public ApiResult<User> test(@RequestBody @Valid User param, BindingResult bindingResult) {
         StringBuffer sb = new StringBuffer();
         if (bindingResult.hasErrors()) {

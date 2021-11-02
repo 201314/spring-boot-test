@@ -11,20 +11,24 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class MyService implements IMyService {
+    @Override
     public void add() {
         log.debug("========MyService add========");
     }
 
+    @Override
     public void doSomeThing(String someThing) {
         log.debug("执行被拦截的方法：" + someThing);
     }
 
+    @Override
     @RpcExceptionCatch
     public ApiResult doSomeThing2(String someThing) {
         log.debug("doSomeThing2：" + someThing);
         throw new BusinessException(BaseErrorCode.SERVICE_NOT_AVAILABLE);
     }
 
+    @Override
     public void doSomeThing3(String someThing) {
         log.debug("doSomeThing3：" + someThing);
         throw new BusinessException(BaseErrorCode.SYS_ERROR);
