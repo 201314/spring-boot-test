@@ -1,6 +1,5 @@
 package com.baomidou.springboot;
 
-import com.alibaba.fastjson.JSON;
 import com.gitee.linzl.commons.annotation.ApiMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,9 @@ public class GetRequestMappingHandlerMappingAutoConfiguration {
         Map<RequestMappingInfo, HandlerMethod> map = mapping.getHandlerMethods();
         map.forEach((requestMappingInfo, handlerMethod) -> {
             ApiMethod api = handlerMethod.getMethodAnnotation(ApiMethod.class);
-            log.warn("url:【{}】," + "\n	" + "method:【{}】,apiMethod:【{}】",
+            log.warn("url:【{}】,method:【{}】,apiMethod:【{}】",
 
-                    JSON.toJSONString(requestMappingInfo.getPatternsCondition().getPatterns()),
+                    requestMappingInfo.getPatternsCondition().getPatterns(),
 
                     handlerMethod,
 

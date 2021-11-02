@@ -1,12 +1,13 @@
 package com.gitee.linzl.commons.aop;
 
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gitee.linzl.commons.tools.UserClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.UUID;
 
@@ -32,15 +35,19 @@ import java.util.UUID;
 @Aspect
 @Slf4j
 public class PerformanceAspect {
+    @Autowired
+    private ObjectMapper mapper;
+
 
     @Around("@annotation(com.gitee.linzl.commons.annotation.Performance)")
     public Object doAround(ProceedingJoinPoint point) throws Throwable {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
+
         HttpServletRequest request = servletRequestAttributes.getRequest();
 
         StopWatch clock = new StopWatch(UUID.randomUUID().toString());
-        Date startTime = new Date();
+        LocalDateTime startTime = LocalDateTime.now();
         clock.start();
 
         Object result = null;
@@ -77,14 +84,15 @@ public class PerformanceAspect {
 
                         .append("key【").append(clock.getId()).append("】,")
                         .append("uri【").append(request.getRequestURI()).append("】,")
-                        .append("postMethod【").append(request.getMethod()).append("】,")
+                        .append("method【").append(request.getMethod()).append("】,")
 
                         .append("访问目标【").append(method.getDeclaringClass().getName()).append("#").append(method.getName()).append("】,")
-                        .append("执行开始时间【").append(startTime).append("】,")
+                        .append("执行开始时间【").append(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss" +
+                        ".SSS"))).append("】,")
                         .append("执行耗时【").append(clock.getTotalTimeMillis()).append(" ms").append("】,")
 
-                        .append("输入数据【").append(JSON.toJSON(json)).append("】,")
-                        .append("输出数据【").append(JSON.toJSON(result)).append("】");
+                        .append("输入数据【").append(mapper.writeValueAsString(json)).append("】,")
+                        .append("输出数据【").append(mapper.writeValueAsString(result)).append("】");
                 log.debug(sbLog.toString());
             }
         }

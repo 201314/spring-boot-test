@@ -1,7 +1,5 @@
 package com.gitee.linzl.commons.api;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,19 +52,12 @@ public class ApiResult<T> implements Serializable {
     }
 
     @JsonIgnore
-    @JSONField(serialize = false)
     public boolean isSuccess() {
         return this.status == true;
     }
 
     @JsonIgnore
-    @JSONField(serialize = false)
     public boolean isFail() {
         return this.status == false;
-    }
-
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
     }
 }
