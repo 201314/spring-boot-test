@@ -21,7 +21,7 @@ public class GatewayController {
     private Map<String, AbstractBaseAction> actionMap;
 
     @PostMapping(value = "/api/m/gateway")
-    public ApiResult<Map> handleRequest(@RequestBody GatewayRequest requestInfo, HttpServletRequest request, HttpServletResponse response) {
+    public ApiResult<String> handleRequest(@RequestBody GatewayRequest requestInfo, HttpServletRequest request, HttpServletResponse response) {
         // 参数校验
         //ValidationResult vRst = ValidationUtils.validateEntity(requestInfo);
         //if (vRst.isHasErrors()) {
@@ -33,9 +33,8 @@ public class GatewayController {
         if (action == null) {
             log.error("GatewayController找不到该方法. method:【{}】", method);
         }
-        ApiResult<Map> responseMap = action.handle(requestInfo, request);
+        ApiResult<String> responseMap = action.handle(requestInfo, request);
         log.info("处理后返回给前端的响应信息:responseMap:【{}】,method:【{}】", responseMap,method);
-        //ServiceContext.getContext().addContextVar("responseMsg", responseMap.checkIfSuccess() ? "S" : responseMap.getCode());
         return responseMap;
     }
 }

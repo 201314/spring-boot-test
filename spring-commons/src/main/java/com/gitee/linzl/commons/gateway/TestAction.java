@@ -12,12 +12,13 @@ import java.util.Map;
 @Service("qihoo.sdk.marketing.test")
 public class TestAction extends AbstractBaseAction {
 	@Override
-	public ApiResult<Map> internalHandle(Map requestMap) {
+	public ApiResult<String> internalHandle(Map requestMap) {
 		log.info("测试action");
 		try {
-			return ApiResults.success(new HashMap<>());
+			return ApiResults.success();
 		} catch (Exception e) {
 			return ApiResults.fail();
 		}
 	}
 }
+
