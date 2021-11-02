@@ -1,9 +1,11 @@
 package com.baomidou.springboot.services;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.springboot.entity.TpTradeOrder;
 import com.baomidou.springboot.mapper.TradeOrderMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.framework.AopContext;
@@ -20,10 +22,14 @@ import java.time.LocalDateTime;
 @Slf4j
 public class TradeOrderServiceImpl implements TradeOrderService {
     @Autowired
-    protected TradeOrderMapper mapper;
+    private TradeOrderMapper mapper;
+    @Autowired
+    private TradeOrderService2 tradeOrderService2;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
-    public void save(Long id) {
+    public void saveTrx(Long id) {
         TpTradeOrder order = new TpTradeOrder();
         order.setId(id);
         // 1 待支付，2支付中，3支付成功，4支付失败，5支付关闭
@@ -45,22 +51,22 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 
 
     @Override
-    public void doBiz1NoException() {
+    public void doBiz1NoException() throws JsonProcessingException {
         Long id = RandomUtils.nextLong();
-        save(id);
+        saveTrx(id);
         doBiz11(id, Boolean.FALSE);
         doBiz12(id, Boolean.FALSE);
     }
 
     @Override
-    public void doBiz1NoExceptionTrx() {
+    public void doBiz1NoExceptionTrx() throws JsonProcessingException {
         Long id = RandomUtils.nextLong();
         doBiz11(id, Boolean.FALSE);
     }
 
-    private void doBiz11(Long id, Boolean throwException) {
+    private void doBiz11(Long id, Boolean throwException) throws JsonProcessingException {
         TpTradeOrder order = mapper.selectById(id);
-        log.info("第1次为待支付:{}", JSON.toJSONString(order));
+        log.info("第1次为待支付:{}", objectMapper.writeValueAsString(order));
         // 1 待支付，2支付中，3支付成功，4支付失败，5支付关闭
         if (StringUtils.equals("1", order.getTradeStatus())) {
             TpTradeOrder newOrder = new TpTradeOrder();
@@ -74,9 +80,9 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         }
     }
 
-    private void doBiz12(Long id, Boolean throwException) {
+    private void doBiz12(Long id, Boolean throwException) throws JsonProcessingException {
         TpTradeOrder order = mapper.selectById(id);
-        log.info("第2次为支付中:{}", JSON.toJSONString(order));
+        log.info("第2次为支付中:{}", objectMapper.writeValueAsString(order));
         // 1 待支付，2支付中，3支付成功，4支付失败，5支付关闭
         if (StringUtils.equals("2", order.getTradeStatus())) {
             TpTradeOrder newOrder = new TpTradeOrder();
@@ -144,5 +150,20 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         log.info("==========doBiz5TrxAndThisTrx service2:{}", service2);
         this.updateTrx(order2, true);
         //service1.updateTrx(order,true);
+    }
+
+    @Override
+    public void testTrx() {
+        // 第一个用this
+        Long id = RandomUtils.nextLong();
+        this.saveTrx(id);
+        // 第二个用Trx，并抛出异常，看第一个this是否有回滚
+        TpTradeOrder newOrder = new TpTradeOrder();
+        newOrder.setId(id);
+        newOrder.setTradeStatus("2");
+        newOrder.setHello("随意" + RandomStringUtils.randomNumeric(2));
+        newOrder.setCreatedBy("创建者" + RandomStringUtils.randomNumeric(2));
+        newOrder.setUpdatedBy("修改者" + RandomStringUtils.randomNumeric(2));
+        tradeOrderService2.updateTrx(newOrder, true);
     }
 }
