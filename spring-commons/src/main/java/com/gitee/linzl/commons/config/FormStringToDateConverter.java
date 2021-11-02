@@ -17,6 +17,8 @@ import java.util.List;
 /**
  * 表单入参，字符串时间转换
  *
+ * 如果是使用Jackson,仍然按照fastjson的传日期形式，会报日期格式不正确。此类是辅助Jackson使用
+ *
  * @author linzhenlie-jk
  * @date 2020/10/16
  */

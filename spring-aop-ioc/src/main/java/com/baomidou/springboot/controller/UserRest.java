@@ -29,7 +29,7 @@ public class UserRest {
      * 分页 PAGE
      */
     @PostMapping("/test")
-    public ApiResult<User> test(@Valid User param, BindingResult bindingResult) {
+    public ApiResult<User> test(@RequestBody @Valid User param, BindingResult bindingResult) {
         StringBuffer sb = new StringBuffer();
         if (bindingResult.hasErrors()) {
 
@@ -43,7 +43,8 @@ public class UserRest {
         User user = new User();
         user.setName("name");
         user.setTestDate(new Date());
-        user.setLocalDateTime(LocalDateTime.now());
+        user.setLocalDateTime(param.getLocalDateTime());
+        user.setLocalDate(param.getLocalDate());
         user.setTestType(200);
         user.setMessage(sb.toString());
         return ApiResults.success(user);

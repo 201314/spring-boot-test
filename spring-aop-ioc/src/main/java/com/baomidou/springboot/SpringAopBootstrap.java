@@ -51,6 +51,7 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
         SpringApplicationBuilder app = new SpringApplicationBuilder(SpringAopBootstrap.class);
         app.bannerMode(Banner.Mode.OFF);
         app.properties(new String[]{});
+        app.profiles("trxRequired");
         ConfigurableApplicationContext context = app.run(args);
         for (String beanDefinitionName : context.getBeanDefinitionNames()) {
             System.out.println(beanDefinitionName + "==>" + context.getBean(beanDefinitionName));
