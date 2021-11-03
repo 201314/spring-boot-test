@@ -1,7 +1,5 @@
 package com.gitee.linzl.commons.tools;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -12,6 +10,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -21,7 +20,13 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 public class BeanUtil {
@@ -97,42 +102,41 @@ public class BeanUtil {
     public static <T> Page<T> copyProperties(Page<?> source, Class<T> target, String... ignoreProperties) {
         List<T> newList = copyProperties(source.getContent(), target, ignoreProperties);
         PageRequest pageRequest = PageRequest.of(source.getNumber(), source.getSize());
-        Page<T> newPage = new PageImpl<T>(newList, pageRequest, source.getTotalElements());
-        return newPage;
+        return new PageImpl<T>(newList, pageRequest, source.getTotalElements());
     }
 
     /**
      * 将一个 Map 对象转化为一个 JavaBean
      *
-     * @param map   包含属性值的 map
-     * @param clazz 要转化的类型
-     * @return 转化出来的 T 对象
+     * @param obj 要转化的对象
+     * @param map 包含属性值的 map
+     * @return 转化出来的 JavaBean 对象
      */
-    public static <T> T convertMapToBean(Map map, Class<T> clazz) {
-        JSONObject jsonObject = new JSONObject(map);
-        return jsonObject.toJavaObject(clazz);
-    }
+    public static Object convertMapToBean(Map<String, String> maps, Object obj) {
+        Class cls = obj.getClass();
+        Field[] fields = cls.getDeclaredFields();
+        for (int i = 0; i < fields.length; i++) {
+            if (!maps.containsKey(fields[i].getName())) {
+                continue;
+            }
 
-    /**
-     * 将一个 JavaBean 对象转化为一个  Map
-     *
-     * @param bean 要转化的JavaBean 对象
-     * @return 转化出来的  Map 对象
-     */
-    public static Map<String, Object> convertBeanToMap(Object bean) {
-        String jsonStr = JSON.toJSONString(bean);
-        return JSONObject.parseObject(jsonStr).getInnerMap();
-    }
+            Object values = maps.get(fields[i].getName());
 
-    /**
-     * 将一个 JavaBean 对象转化为一个Map<String, String>
-     *
-     * @param bean 要转化的JavaBean 对象
-     * @return 转化出来的  Map 对象（日期为非时间戳形式）
-     */
-    public static Map<String, Object> convertBeanToMap(Object bean, String dateFormat) {
-        String jsonStr = JSON.toJSONStringWithDateFormat(bean, dateFormat);
-        return JSONObject.parseObject(jsonStr).getInnerMap();
+            Object[] argss = new Object[1];
+            argss[0] = (String) values;
+
+            PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(cls, fields[i].getName());
+            try {
+                descriptor.getWriteMethod().invoke(obj, values);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        return obj;
     }
 
     /**
@@ -147,11 +151,9 @@ public class BeanUtil {
      */
     public static Map<String, Object> convertBeanToMapWithDatePattern(Object bean)
             throws IntrospectionException, IllegalAccessException, InvocationTargetException {
-        Map<String, Object> returnMap = new HashMap();
 
-        Class type = bean.getClass();
-        BeanInfo beanInfo = Introspector.getBeanInfo(type);
-        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(bean.getClass());
+        Map<String, Object> returnMap = new HashMap();
         for (int i = 0, length = propertyDescriptors.length; i < length; i++) {
             PropertyDescriptor descriptor = propertyDescriptors[i];
             String propertyName = descriptor.getName();
