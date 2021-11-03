@@ -1,7 +1,6 @@
 package com.gitee.linzl.commons.client;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,8 +82,10 @@ public class DefaultClient {
         }
         requestProtocol.setSignType(this.signType);
 
-        String protocol = JSON.toJSONString(requestProtocol);
-        Map<String, Object> mustProtocolMap = JSONObject.parseObject(protocol).getInnerMap();
+        String protocol = objectMapper.writeValueAsString(requestProtocol);
+        JavaType protocolJavaType = objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class,
+                Object.class);
+        Map<String, Object> mustProtocolMap = objectMapper.readValue(protocol, protocolJavaType);
 
         // 2.签名
         mustProtocolMap.put(ApiConstant.SIGN, this.cipher.sign(mustProtocolMap, this.signType));
