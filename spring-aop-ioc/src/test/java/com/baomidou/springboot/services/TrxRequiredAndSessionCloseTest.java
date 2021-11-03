@@ -1,5 +1,6 @@
 package com.baomidou.springboot.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,7 @@ public class TrxRequiredAndSessionCloseTest {
     }
 
     @Test
-    public void doBiz2Trx() {
+    public void doBiz2Trx() throws JsonProcessingException {
         log.info("doBiz1Trx有事务,事务REQUIRED,mybatis Session一级缓存【关闭】");
         service.doBiz1NoExceptionTrx();
     }
