@@ -1,9 +1,9 @@
 package com.gitee.linzl.commons.tools;
 
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.TimeoutUtils;
@@ -23,17 +23,28 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Redis工具类
+ * Redis工具类,使用JackSon序列化与反序列化
+ *
+ * @see RedisAutoExtConfiguration
  */
 public class RedisUtil {
     private StringRedisTemplate stringRedisTemplate;
+    private RedisTemplate redisTemplate;
 
-    public void setRedisTemplate(StringRedisTemplate redisTemplate) {
+    public void setStringRedisTemplate(StringRedisTemplate redisTemplate) {
         this.stringRedisTemplate = redisTemplate;
     }
 
-    public StringRedisTemplate getRedisTemplate() {
+    public void setRedisTemplate(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+    public StringRedisTemplate getStringRedisTemplate() {
         return this.stringRedisTemplate;
+    }
+
+    public RedisTemplate getRedisTemplate() {
+        return this.redisTemplate;
     }
 
     /** -------------------key相关操作--------------------- */
@@ -236,7 +247,7 @@ public class RedisUtil {
      * @param value
      */
     public void set(String key, Object value) {
-        stringRedisTemplate.opsForValue().set(key, JSON.toJSONString(value));
+        redisTemplate.opsForValue().set(key, value);
     }
 
     /**
@@ -257,12 +268,13 @@ public class RedisUtil {
      * 获取指定 key 的值
      *
      * @param key
-     * @param clazz 将缓存转换成指定的class
+     * @param t
+     * @param <T>
      * @return
      */
-    public Object get(String key, Class<?> clazz) {
-        String value = stringRedisTemplate.opsForValue().get(key);
-        return JSON.parseObject(value, clazz);
+    public <T> T get(String key, T t) {
+        T value = (T) stringRedisTemplate.opsForValue().get(key);
+        return value;
     }
 
     /**
