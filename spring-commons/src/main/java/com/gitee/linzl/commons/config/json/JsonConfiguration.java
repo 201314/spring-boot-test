@@ -8,14 +8,12 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.ObjectSerializer;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializeWriter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -37,8 +35,8 @@ public class JsonConfiguration implements WebMvcConfigurer {
 
     static {
         ClassLoader classLoader = WebMvcConfigurationSupport.class.getClassLoader();
-        fastJsonPresent = ClassUtils.isPresent(JSON.class.getName(), classLoader);
-        jackSonPresent = ClassUtils.isPresent(ObjectMapper.class.getName(), classLoader);
+        fastJsonPresent = ClassUtils.isPresent("com.alibaba.fastjson.JSON", classLoader);
+        jackSonPresent = ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader);
     }
 
 
