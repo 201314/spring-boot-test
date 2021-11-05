@@ -1,5 +1,13 @@
 package com.gitee.linzl.commons.config;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.ObjectSerializer;
 import com.alibaba.fastjson.serializer.SerializeConfig;
@@ -30,14 +38,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 可以通过实现WebMvcConfigurer,亦可继承WebMvcConfigurationSupport
  *
@@ -48,82 +48,7 @@ import java.util.List;
  */
 @Configuration
 @Slf4j
-public class CommonConfig implements WebMvcConfigurer {
-    private static final boolean jackSonPresent;
-    private static final boolean fastJsonPresent;
-
-    static {
-        ClassLoader classLoader = WebMvcConfigurationSupport.class.getClassLoader();
-        fastJsonPresent = ClassUtils.isPresent("com.alibaba.fastjson.JSON", classLoader);
-        jackSonPresent = ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader);
-    }
-
-    /**
-     * 添加一个自定义的HttpMessageConverter,不覆盖默认注册的HttpMessageConverter
-     */
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        log.debug("extendMessageConverters========>extendMessageConverters");
-        if (jackSonPresent) {
-            log.debug("如果有JackSon,优先使用");
-            return;
-        }
-
-        if (fastJsonPresent) {
-            FastJsonHttpMessageConverter jsonConverter = new FastJsonHttpMessageConverter();
-            FastJsonConfig fastJsonConfig = new FastJsonConfig();
-
-            SerializeConfig serializeConfig = SerializeConfig.getGlobalInstance();
-            // 支持 LocalDateTime 、LocalDate 转换成long
-            LocalDateToLongSerializer instance = new LocalDateToLongSerializer();
-            serializeConfig.put(LocalDateTime.class, instance);
-            serializeConfig.put(LocalDate.class, instance);
-            // 驼峰转下划线
-            // FastJson配置驼峰命名规则会导致spring boot admin 或者 swagger-ui无法正常使用
-            fastJsonConfig.setSerializeConfig(serializeConfig);
-
-            // fastjson 统一返回时间戳,由前端自己处理格式
-            // 空值特别处理
-            // WriteNullListAsEmpty 将Collection类型字段的字段空值输出为[]
-            // WriteNullStringAsEmpty 将字符串类型字段的空值输出为空字符串 ""
-            // WriteNullNumberAsZero 将数值类型字段的空值输出为0
-            // WriteNullBooleanAsFalse 将Boolean类型字段的空值输出为false
-            fastJsonConfig.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect,
-                    SerializerFeature.WriteMapNullValue);
-            jsonConverter.setFastJsonConfig(fastJsonConfig);
-
-            // 解决中文乱码问题
-            List<MediaType> mediaTypes = new ArrayList<>();
-            mediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
-            jsonConverter.setSupportedMediaTypes(mediaTypes);
-
-            converters.add(0, jsonConverter);
-            if (log.isDebugEnabled()) {
-                log.debug("初始化fastjson,默认时间格式yyyy-MM-dd HH:mm:ss");
-            }
-        }
-    }
-
-    public class LocalDateToLongSerializer implements ObjectSerializer {
-        @Override
-        public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType, int features) throws IOException {
-            SerializeWriter out = serializer.out;
-            if (object == null) {
-                out.writeNull();
-                return;
-            }
-            if (object instanceof LocalDateTime) {
-                LocalDateTime time = (LocalDateTime) object;
-                out.writeLong(time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-            }
-            if (object instanceof LocalDate) {
-                LocalDate time = (LocalDate) object;
-                out.writeLong(time.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
-            }
-        }
-    }
-
-
+public class CommonConfiguration implements WebMvcConfigurer {
     @Profile({"dev"})
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -132,14 +57,14 @@ public class CommonConfig implements WebMvcConfigurer {
         }
         // 设置允许跨域的路径
         registry.addMapping("/**")
-                // 设置允许跨域请求的域名
-                .allowedOrigins("*")
-                // 是否允许证书 不再默认开启
-                .allowCredentials(true)
-                // 设置允许的方法
-                .allowedMethods("*").allowedMethods("*")
-                // 跨域允许时间
-                .maxAge(3600);
+            // 设置允许跨域请求的域名
+            .allowedOrigins("*")
+            // 是否允许证书 不再默认开启
+            .allowCredentials(true)
+            // 设置允许的方法
+            .allowedMethods("*").allowedMethods("*")
+            // 跨域允许时间
+            .maxAge(3600);
     }
 
     @Profile({"dev"})
@@ -200,11 +125,18 @@ public class CommonConfig implements WebMvcConfigurer {
         configurer.enable();
     }
 
+    /**
+     * Converter类型转换,在org.springframework.core.convert.ConversionService使用
+     *
+     * @param registry
+     */
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new FormStringToDateConverter.StringToDateConverter());
         registry.addConverter(new FormStringToDateConverter.StringToLocalDateConverter());
+        registry.addConverter(new FormStringToDateConverter.LongToLocalDateConverter());
         registry.addConverter(new FormStringToDateConverter.StringToLocalDateTimeConverter());
+        registry.addConverter(new FormStringToDateConverter.LongToLocalDateTimeConverter());
     }
 
     @Bean
@@ -215,7 +147,7 @@ public class CommonConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(this.tokenInterceptor()).addPathPatterns("/**")
-                .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
-		registry.addInterceptor(this.localeChangeInterceptor()).addPathPatterns("/**");
+            .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
+        registry.addInterceptor(this.localeChangeInterceptor()).addPathPatterns("/**");
     }
 }

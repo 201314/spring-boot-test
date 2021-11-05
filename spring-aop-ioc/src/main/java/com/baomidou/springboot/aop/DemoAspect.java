@@ -25,7 +25,7 @@ public class DemoAspect {
      */
     @Pointcut("execution(* com.baomidou.springboot.controller.*Rest.*(..))")
     public void serviceExpression() {
-        System.out.println("@Pointcut==>serviceExpression");
+        log.debug("@Pointcut==>serviceExpression");
     }
 
     /**
@@ -35,7 +35,7 @@ public class DemoAspect {
      */
     @Before("serviceExpression()")
     public void before(JoinPoint joinPoint) {
-        System.out.println("我是前置通知!!!");
+        log.debug("我是前置通知!!!");
         // 获取目标方法的参数信息
         Object[] obj = joinPoint.getArgs();
         // AOP代理类的信息
@@ -71,7 +71,7 @@ public class DemoAspect {
             parameterMap.put(parameter, request.getParameter(parameter));
         }
         if (obj.length > 0) {
-            System.out.println("请求的参数信息为：" + parameterMap);
+            log.debug("请求的参数信息为：" + parameterMap);
         }
     }
 
@@ -81,7 +81,7 @@ public class DemoAspect {
      */
     @Around("serviceExpression()")
     public Object aroundMethod(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("环绕通知的目标方法名：" + joinPoint.getSignature().getName());
+        log.debug("环绕通知的目标方法名：" + joinPoint.getSignature().getName());
         try {// obj之前可以写目标方法执行前的逻辑
             // 调用执行目标方法
             return joinPoint.proceed();
@@ -99,7 +99,7 @@ public class DemoAspect {
      */
     @After("serviceExpression()")
     public Object doAfter(JoinPoint joinPoint) {
-        System.out.println("后置通知");
+        log.debug("后置通知");
         return null;
     }
 
@@ -116,7 +116,7 @@ public class DemoAspect {
      */
     @AfterReturning(value = "serviceExpression()", returning = "keys")
     public Object doAfterReturning(JoinPoint joinPoint, Object keys) {
-        System.out.println("后置返回通知的返回值：" + keys);
+        log.debug("后置返回通知的返回值：" + keys);
         return keys;
     }
 
@@ -135,7 +135,7 @@ public class DemoAspect {
         // 目标方法名：
         log.error("发生了异常:【{}】", joinPoint.getSignature().getName());
         if (exception instanceof NullPointerException) {
-            System.out.println("发生了空指针异常!!!!!");
+            log.debug("发生了空指针异常!!!!!");
         }
         return null;
     }

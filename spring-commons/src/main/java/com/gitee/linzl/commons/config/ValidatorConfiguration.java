@@ -13,7 +13,7 @@ import javax.validation.Validator;
  * @date 2019/8/27
  */
 @Configuration
-public class ValidatorConfig {
+public class ValidatorConfiguration {
     /**
      * 只要检测到一个验证错误就快速失败
      *

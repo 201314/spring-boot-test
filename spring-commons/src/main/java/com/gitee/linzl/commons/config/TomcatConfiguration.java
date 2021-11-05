@@ -18,7 +18,7 @@ import javax.servlet.Servlet;
  */
 @ConditionalOnClass({ Servlet.class, Tomcat.class, UpgradeProtocol.class })
 @Component
-public class TomcatConfig {
+public class TomcatConfiguration {
     /**
      * Slow http 拒绝服务原理:
      * 请求以很低的速度发送post请求数据包，当客户端连接了许多以后，占用了所有webserver可用连接，从而导致服务夯死。

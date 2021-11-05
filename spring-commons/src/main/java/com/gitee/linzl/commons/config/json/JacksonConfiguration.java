@@ -1,21 +1,21 @@
-package com.gitee.linzl.commons.config;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.boot.jackson.JsonComponent;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+package com.gitee.linzl.commons.config.json;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.jackson.JsonComponent;
+import org.springframework.context.annotation.Bean;
 
 /**
  * Jackson支持LocalDateTime,LocalDate返回时间戳，默认时间返回给前端统一为时间戳
@@ -26,7 +26,7 @@ import java.util.TimeZone;
  */
 @JsonComponent
 @Slf4j
-public class JacksonConfig {
+public class JacksonConfiguration {
     /**
      * 日期序列化
      * <p>
@@ -58,7 +58,13 @@ public class JacksonConfig {
             // POJO对象必须要有字段，否则Jackson报错FAIL_ON_EMPTY_BEANS
             builder.featuresToDisable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
             builder.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            // {"list": ["2021-11-11 11:11:11.333"]} 允许转为时间
+            builder.featuresToEnable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
             builder.timeZone(TimeZone.getTimeZone("GMT+8"));
+
+            // 字符串序列化为时间,允许多种格式的时间字符串 , 也可以像上面两个写成内部类
+            builder.deserializerByType(LocalDate.class, LocalDateDeserializerExt.INSTANCE);
+            builder.deserializerByType(LocalDateTime.class, LocalDateTimeDeserializerExt.INSTANCE);
         };
     }
 }

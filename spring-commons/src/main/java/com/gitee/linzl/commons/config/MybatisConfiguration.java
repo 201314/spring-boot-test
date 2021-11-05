@@ -21,7 +21,7 @@ import org.springframework.util.DigestUtils;
 @ConditionalOnClass(value = Mapper.class)
 @Component
 @Slf4j
-public class MybatisConfig {
+public class MybatisConfiguration {
     @ConditionalOnMissingBean(value = {OptUserService.class})
     @Bean
     public OptUserService defaultOptUserService() {
