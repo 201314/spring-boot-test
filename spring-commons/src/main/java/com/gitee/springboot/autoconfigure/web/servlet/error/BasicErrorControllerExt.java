@@ -1,5 +1,11 @@
 package com.gitee.springboot.autoconfigure.web.servlet.error;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import com.gitee.linzl.commons.annotation.IgnoreScan;
 import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.enums.BaseErrorCode;
@@ -10,37 +16,38 @@ import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorCon
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
 
 /**
  * BasicErrorControllerExt不能被自定义扫描Controller扫描到，否则无法启动
  * <p>
- * 参考 org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController修改
  *
  * @author linzl
  * @description
  * @email 2225010489@qq.com
  * @date 2018年8月2日
+ * @see org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController 修改
+ * @see org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver
+ * 捕捉到异常到 response调用到该错误Controller控制器
  */
-@Lazy
 @Controller
 @RequestMapping({"${server.error.path:${error.path:/error}}"})
 @Slf4j
 @IgnoreScan
 public class BasicErrorControllerExt extends AbstractErrorController {
     private final ErrorProperties errorProperties;
+
+    public BasicErrorControllerExt(ErrorAttributes errorAttributes, ErrorProperties errorProperties) {
+        this(errorAttributes, errorProperties, Collections.emptyList());
+    }
 
     public BasicErrorControllerExt(ErrorAttributes errorAttributes, ErrorProperties errorProperties,
                                    List<ErrorViewResolver> errorViewResolvers) {
@@ -67,15 +74,27 @@ public class BasicErrorControllerExt extends AbstractErrorController {
     }
 
     @RequestMapping
-    public Object error(HttpServletResponse response) {
+    public Object error(HttpServletRequest request) {
+        HttpStatus status = getStatus(request);
+        if (status == HttpStatus.NO_CONTENT) {
+            return new ResponseEntity<>(status);
+        }
+        Map<String, Object> body = getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.ALL));
+        log.error("接口请求错误，http status:【{}】", body);
+
         ApiResult<Object> rep;
-        log.debug("response.getStatus():【{}】", response.getStatus());
-        if (response.getStatus() == HttpStatus.NOT_FOUND.value()) {
-            rep = ApiResults.fail(BaseErrorCode.NOT_FOUND_URL);
+        if (String.valueOf(HttpStatus.BAD_REQUEST.value()).equals(String.valueOf(body.get("status")))) {
+            rep = ApiResults.fail(BaseErrorCode.BAD_REQUEST);
         } else {
             rep = ApiResults.fail(BaseErrorCode.MISSING_PARAMETERS);
         }
         return new ResponseEntity<>(rep, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<String> mediaTypeNotAcceptable(HttpServletRequest request) {
+        HttpStatus status = getStatus(request);
+        return ResponseEntity.status(status).build();
     }
 
     protected ErrorAttributeOptions getErrorAttributeOptions(HttpServletRequest request, MediaType mediaType) {

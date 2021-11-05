@@ -74,7 +74,7 @@
 	<logger name="com.baomidou.springboot" level="DEBUG" additivity="true" />
 	<logger name="org.mybatis.spring.SqlSessionUtils" level="DEBUG" additivity="true" />
 
-	<root level="error">
+	<root level="DEBUG">
 		<appender-ref ref="consoleLog" />
 		<appender-ref ref="fileDebugLog" />
 		<appender-ref ref="fileErrorLog" />
