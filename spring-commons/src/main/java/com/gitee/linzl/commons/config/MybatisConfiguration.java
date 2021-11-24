@@ -1,5 +1,8 @@
 package com.gitee.linzl.commons.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.gitee.linzl.commons.mybatis.interceptor.AutoFillFieldInterceptor;
 import com.gitee.linzl.commons.mybatis.interceptor.FieldEncryptInterceptor;
 import com.gitee.linzl.commons.mybatis.service.CryptService;
@@ -7,7 +10,11 @@ import com.gitee.linzl.commons.mybatis.service.OptUserService;
 import com.gitee.linzl.commons.tools.EncryptUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.LocalCacheScope;
+import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -62,5 +69,24 @@ public class MybatisConfiguration {
     @Bean
     public EncryptUtil encryptUtil(@Autowired CryptService cryptService) {
         return new EncryptUtil(cryptService);
+    }
+
+    @ConditionalOnClass(value = {ConfigurationCustomizer.class})
+    @Bean
+    public List<ConfigurationCustomizer> list() {
+        log.info("mybatis关闭一级Session、二级Map缓存并【驼峰命名法】转换字段");
+        List<ConfigurationCustomizer> configurationCustomizers = new ArrayList<>();
+        configurationCustomizers.add(new ConfigurationCustomizer() {
+            @Override
+            public void customize(Configuration configuration) {
+                // Session一级缓存【关闭】，只要命中索引，查询很快
+                configuration.setLocalCacheScope(LocalCacheScope.STATEMENT);
+                // 关闭二级缓存，缓存由一个Map保存，容量有限且没有过期管理
+                configuration.setCacheEnabled(Boolean.FALSE);
+                // 使用驼峰命名法转换字段,此时数据库可以直接映射到Entity字段
+                configuration.setMapUnderscoreToCamelCase(Boolean.TRUE);
+            }
+        });
+        return configurationCustomizers;
     }
 }
