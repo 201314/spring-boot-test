@@ -18,7 +18,7 @@ public class CoreRest {
 	 * 
 	 * @return
 	 */
-	@RequestMapping("ping")
+	@RequestMapping(value = {"","ping"})
 	public String ping() {
 		return "pong";
 	}

@@ -147,7 +147,10 @@ public class CommonConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(this.tokenInterceptor()).addPathPatterns("/**")
-            .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
+            .excludePathPatterns("/swagger-resources/**",
+                "/webjars/**", "/v2/**",
+                "/swagger-ui.html/**",
+                "/favicon.ico");
         registry.addInterceptor(this.localeChangeInterceptor()).addPathPatterns("/**");
     }
 }
