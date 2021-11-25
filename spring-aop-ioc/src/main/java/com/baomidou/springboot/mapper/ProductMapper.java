@@ -9,33 +9,13 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ProductMapper {
-    /**
-     *
-     * @mbg.generated 2021-01-08 18:02:50
-     */
     int deleteByPrimaryKey(Long id);
 
-    /**
-     *
-     * @mbg.generated 2021-01-08 18:02:50
-     */
     int insert(Product record);
 
-    /**
-     *
-     * @mbg.generated 2021-01-08 18:02:50
-     */
     int insertSelective(Product record);
 
-    /**
-     *
-     * @mbg.generated 2021-01-08 18:02:50
-     */
     int updateByPrimaryKeySelective(Product record);
 
-    /**
-     *
-     * @mbg.generated 2021-01-08 18:02:50
-     */
     int updateByPrimaryKey(Product record);
 }

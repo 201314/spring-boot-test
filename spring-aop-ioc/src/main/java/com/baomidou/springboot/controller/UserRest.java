@@ -10,11 +10,13 @@ import java.util.Date;
 import java.util.List;
 
 import com.baomidou.springboot.entity.User;
+import com.baomidou.springboot.services.IMyService;
 import com.gitee.linzl.commons.annotation.ApiMethod;
 import com.gitee.linzl.commons.annotation.Performance;
 import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.tools.ApiResults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -29,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/user")
 public class UserRest {
+    @Autowired
+    private IMyService iMyService;
     /**
      * 分页 PAGE
      */
@@ -66,6 +70,9 @@ public class UserRest {
         user.setLocalDate(param.getLocalDate());
         user.setTestType(200);
         user.setMessage(sb.toString());
+        iMyService.select1();
+        iMyService.add();
+        iMyService.select2();
         return ApiResults.success(user);
     }
 
