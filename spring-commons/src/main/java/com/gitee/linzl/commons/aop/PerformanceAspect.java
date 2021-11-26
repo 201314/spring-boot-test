@@ -1,11 +1,19 @@
 package com.gitee.linzl.commons.aop;
 
+import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gitee.linzl.commons.tools.UserClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -14,14 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * 耗时切面
@@ -38,8 +38,12 @@ public class PerformanceAspect {
     @Autowired
     private ObjectMapper mapper;
 
+    @Pointcut("(@annotation(com.gitee.linzl.commons.annotation.Performance)||@within(com.gitee.linzl.commons.annotation.Performance)) " +
+        "&& execution(public * *(..))")
+    public void performanceExpression() {
+    }
 
-    @Around("@annotation(com.gitee.linzl.commons.annotation.Performance)")
+    @Around("performanceExpression()")
     public Object doAround(ProceedingJoinPoint point) throws Throwable {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
@@ -82,17 +86,17 @@ public class PerformanceAspect {
                 StringBuilder sbLog = new StringBuilder();
                 sbLog.append("IP【").append(UserClientUtil.builder(request).getIp()).append("】,")
 
-                        .append("key【").append(clock.getId()).append("】,")
-                        .append("uri【").append(request.getRequestURI()).append("】,")
-                        .append("method【").append(request.getMethod()).append("】,")
+                    .append("key【").append(clock.getId()).append("】,")
+                    .append("uri【").append(request.getRequestURI()).append("】,")
+                    .append("method【").append(request.getMethod()).append("】,")
 
-                        .append("访问目标【").append(method.getDeclaringClass().getName()).append("#").append(method.getName()).append("】,")
-                        .append("执行开始时间【").append(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss" +
-                        ".SSS"))).append("】,")
-                        .append("执行耗时【").append(clock.getTotalTimeMillis()).append(" ms").append("】,")
+                    .append("访问目标【").append(method.getDeclaringClass().getName()).append("#").append(method.getName()).append("】,")
+                    .append("执行开始时间【").append(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss" +
+                    ".SSS"))).append("】,")
+                    .append("执行耗时【").append(clock.getTotalTimeMillis()).append(" ms").append("】,")
 
-                        .append("输入数据【").append(mapper.writeValueAsString(json)).append("】,")
-                        .append("输出数据【").append(mapper.writeValueAsString(result)).append("】");
+                    .append("输入数据【").append(mapper.writeValueAsString(json)).append("】,")
+                    .append("输出数据【").append(mapper.writeValueAsString(result)).append("】");
                 log.debug(sbLog.toString());
             }
         }
