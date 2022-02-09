@@ -16,7 +16,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.request.RequestAttributes;
@@ -31,19 +31,21 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @email 2225010489@qq.com
  * @date 2019年4月8日
  */
-@Configuration
-@Aspect
 @Slf4j
+@Aspect
+@Component
 public class PerformanceAspect {
     @Autowired
     private ObjectMapper mapper;
-
+    /**
+     * 切入点：表示在哪个类的哪个方法进行切入。配置有切入点表达式
+     */
     @Pointcut("(@annotation(com.gitee.linzl.commons.annotation.Performance)||@within(com.gitee.linzl.commons.annotation.Performance)) " +
         "&& execution(public * *(..))")
-    public void performanceExpression() {
+    public void serviceExpression() {
     }
 
-    @Around("performanceExpression()")
+    @Around("serviceExpression()")
     public Object doAround(ProceedingJoinPoint point) throws Throwable {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;

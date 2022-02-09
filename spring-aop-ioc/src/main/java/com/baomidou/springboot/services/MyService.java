@@ -1,6 +1,5 @@
 package com.baomidou.springboot.services;
 
-import com.baomidou.springboot.Test;
 import com.baomidou.springboot.entity.Product;
 import com.baomidou.springboot.entity.TpTradeOrder;
 import com.baomidou.springboot.mapper.ProductMapper;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-
 public class MyService implements IMyService {
     @Autowired
     private ProductMapper productMapper;
@@ -33,7 +31,6 @@ public class MyService implements IMyService {
     private ObjectMapper objectMapper;
 
     @Override
-    @Test
     public void add() {
         Product product = new Product();
         product.setName("我是写库：" + RandomStringUtils.randomAlphabetic(10));
@@ -41,7 +38,6 @@ public class MyService implements IMyService {
     }
 
     @Override
-    @Test
     public void select1() {
         Long id = RandomUtils.nextLong();
         TpTradeOrder order = new TpTradeOrder();
@@ -57,7 +53,6 @@ public class MyService implements IMyService {
     }
 
     @Override
-    @Test
     public void select2() {
         Long id = RandomUtils.nextLong();
         TpTradeOrder order = new TpTradeOrder();

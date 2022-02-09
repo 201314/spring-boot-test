@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -23,9 +24,9 @@ import java.util.Objects;
  * @author linzhenlie
  * @date 2019/9/2
  */
-@Configuration
-@Aspect
 @Slf4j
+@Aspect
+@Component
 public class ControllerValidatorAspect {
     @Pointcut("within(@org.springframework.stereotype.Controller *)||within(@org.springframework.web.bind.annotation.RestController *)")
     public void controllerExpression() {
@@ -77,3 +78,4 @@ public class ControllerValidatorAspect {
         }
     }
 }
+

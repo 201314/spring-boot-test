@@ -1,5 +1,9 @@
 package com.gitee.linzl.commons.aop;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Map;
+
 import com.gitee.linzl.commons.annotation.ParamValidator;
 import com.gitee.linzl.commons.enums.BaseErrorCode;
 import com.gitee.linzl.commons.tools.ApiResults;
@@ -10,19 +14,15 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.context.annotation.Configuration;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Map;
+import org.springframework.stereotype.Component;
 
 /**
  * @author linzhenlie
  * @date 2020-05-11
  */
-@Configuration
-@Aspect
 @Slf4j
+@Aspect
+@Component
 public class ParamValidatorAspect {
 
     @Before("@annotation(com.gitee.linzl.commons.annotation.ParamValidator)")
