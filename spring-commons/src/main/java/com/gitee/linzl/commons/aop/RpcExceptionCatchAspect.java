@@ -1,5 +1,8 @@
 package com.gitee.linzl.commons.aop;
 
+import java.lang.reflect.Method;
+import java.util.Objects;
+
 import com.gitee.linzl.commons.annotation.RpcExceptionCatch;
 import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.exception.BaseException;
@@ -10,10 +13,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.context.annotation.Configuration;
-
-import java.lang.reflect.Method;
-import java.util.Objects;
+import org.springframework.stereotype.Component;
 
 /**
  * 远程接口，统一异常包装
@@ -21,16 +21,15 @@ import java.util.Objects;
  * @author linzhenlie-jk
  * @date 2020/12/22
  */
-@Configuration
-@Aspect
 @Slf4j
+@Aspect
+@Component
 public class RpcExceptionCatchAspect {
     /**
      * 切入点：表示在哪个类的哪个方法进行切入。配置有切入点表达式
      */
     @Pointcut("@annotation(com.gitee.linzl.commons.annotation.RpcExceptionCatch)")
     public void serviceExpression() {
-        System.out.println("@Pointcut==>RpcExceptionCatch");
     }
 
     /**
