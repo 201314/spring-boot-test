@@ -1,11 +1,5 @@
 package com.gitee.linzl.commons.tools;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -27,6 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 @Slf4j
 public class BeanUtil {
@@ -112,7 +111,7 @@ public class BeanUtil {
      * @param map 包含属性值的 map
      * @return 转化出来的 JavaBean 对象
      */
-    public static Object convertMapToBean(Map<String, String> maps, Object obj) {
+    public static Object populate(Map<String, ? extends Object> maps, Object obj) {
         Class cls = obj.getClass();
         Field[] fields = cls.getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
@@ -121,10 +120,6 @@ public class BeanUtil {
             }
 
             Object values = maps.get(fields[i].getName());
-
-            Object[] argss = new Object[1];
-            argss[0] = (String) values;
-
             PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(cls, fields[i].getName());
             try {
                 descriptor.getWriteMethod().invoke(obj, values);
@@ -149,8 +144,8 @@ public class BeanUtil {
      * @throws IllegalAccessException    如果实例化 JavaBean 失败
      * @throws InvocationTargetException 如果调用属性的 setter 方法失败
      */
-    public static Map<String, Object> convertBeanToMapWithDatePattern(Object bean)
-            throws IntrospectionException, IllegalAccessException, InvocationTargetException {
+    public static Map<String, Object> describe(Object bean)
+        throws IntrospectionException, IllegalAccessException, InvocationTargetException {
 
         PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(bean.getClass());
         Map<String, Object> returnMap = new HashMap();
@@ -180,7 +175,7 @@ public class BeanUtil {
             } else if (result instanceof List) {
                 List tmp = new ArrayList();
                 for (Object o : (List) result) {
-                    tmp.add(convertBeanToMapWithDatePattern(o));
+                    tmp.add(describe(o));
                 }
                 returnMap.put(propertyName, tmp);
             } else if (result instanceof BigDecimal) {
@@ -274,17 +269,17 @@ public class BeanUtil {
     public static boolean isBaseDataType(Object obj) {
         Class clazz = obj.getClass();
         return (obj instanceof Character || clazz.equals(Character.class)) ||
-                (obj instanceof Byte || clazz.equals(Byte.class)) ||
-                (obj instanceof Boolean || clazz.equals(Boolean.class)) ||
-                (obj instanceof Short || clazz.equals(Short.class)) ||
-                (obj instanceof Integer || clazz.equals(Integer.class)) ||
-                (obj instanceof Long || clazz.equals(Long.class)) ||
-                (obj instanceof Float || clazz.equals(Float.class)) ||
-                (obj instanceof Double || clazz.equals(Double.class)) ||
-                (obj instanceof String || clazz.equals(String.class)) ||
-                (obj instanceof BigDecimal || clazz.equals(BigDecimal.class)) ||
-                (obj instanceof BigInteger || clazz.equals(BigInteger.class)) ||
-                (obj instanceof Date || clazz.equals(Date.class)) ||
-                clazz.isPrimitive();
+            (obj instanceof Byte || clazz.equals(Byte.class)) ||
+            (obj instanceof Boolean || clazz.equals(Boolean.class)) ||
+            (obj instanceof Short || clazz.equals(Short.class)) ||
+            (obj instanceof Integer || clazz.equals(Integer.class)) ||
+            (obj instanceof Long || clazz.equals(Long.class)) ||
+            (obj instanceof Float || clazz.equals(Float.class)) ||
+            (obj instanceof Double || clazz.equals(Double.class)) ||
+            (obj instanceof String || clazz.equals(String.class)) ||
+            (obj instanceof BigDecimal || clazz.equals(BigDecimal.class)) ||
+            (obj instanceof BigInteger || clazz.equals(BigInteger.class)) ||
+            (obj instanceof Date || clazz.equals(Date.class)) ||
+            clazz.isPrimitive();
     }
 }
