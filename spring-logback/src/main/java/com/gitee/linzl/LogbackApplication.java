@@ -2,7 +2,6 @@ package com.gitee.linzl;
 
 import ch.qos.logback.classic.helpers.MDCInsertingServletFilter;
 import com.alibaba.fastjson.JSON;
-import com.gitee.linzl.commons.filter.gzip.GzipFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -21,7 +20,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 
-@SpringBootApplication
+@EnableAutoCommons
 @Slf4j
 @Controller
 public class LogbackApplication {
