@@ -4,9 +4,20 @@ import com.gitee.linzl.domain.CarDomain;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 
+/**
+ * 自定义（定制化）实例化bean的逻辑
+ * <bean id="car" class="com.gitee.linzl.factory.CarFactoryBean" carInfo="超级跑车，400，2000000"/>
+ * <p>
+ * 最常规的方式
+ * <bean id="car" class="com.gitee.linzl.domain.CarDomain">
+ *      <property name ="brand" value="超级跑车"/>
+ *      <property name ="maxSpeed" value="400"/>
+ *      <property name ="price" value="2000000"/>
+ * </bean>
+ */
 @Component
 public class CarFactoryBean implements FactoryBean<CarDomain> {
-    private String carInfo = "大众SUV,180,180000";
+    private String carInfo = "超级跑车，400，2000000";
 
     @Override
     public CarDomain getObject() throws Exception {
