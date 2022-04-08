@@ -61,6 +61,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
     @Override
     public void doBiz1NoExceptionTrx() throws JsonProcessingException {
         Long id = RandomUtils.nextLong();
+        saveTrx(id);
         doBiz11(id, Boolean.FALSE);
     }
 

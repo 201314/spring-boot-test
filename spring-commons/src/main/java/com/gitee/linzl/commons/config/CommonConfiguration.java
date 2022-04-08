@@ -63,7 +63,6 @@ public class CommonConfiguration implements WebMvcConfigurer {
             .allowCredentials(true)
             // 设置允许的方法
             .allowedMethods("*").allowedHeaders("*")
-            .exposedHeaders("*")
             // 跨域允许时间
             .maxAge(3600);
     }

@@ -1,5 +1,8 @@
 package com.baomidou.springboot;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import com.gitee.linzl.EnableAutoCommons;
 import com.gitee.linzl.commons.filter.gzip.GzipFilter;
 import lombok.extern.slf4j.Slf4j;
@@ -72,24 +75,18 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
     }
     // -----  对Controller getUser方法进行跟踪 END
 
-    @Profile("mybatisSessionClose")
     @Bean
-    public List<ConfigurationCustomizer> list() {
-        log.info("Session一级缓存【关闭】");
-        List<ConfigurationCustomizer> configurationCustomizers = new ArrayList<>();
-        configurationCustomizers.add(new ConfigurationCustomizer() {
-            @Override
-            public void customize(Configuration configuration) {
-                // Session一级缓存【关闭】，只要命中索引，查询很快
-                configuration.setLocalCacheScope(LocalCacheScope.STATEMENT);
-                // 关闭二级缓存，缓存由一个Map保存，容量有限且没有过期管理
-                configuration.setCacheEnabled(Boolean.FALSE);
-                // 使用驼峰命名法转换字段,此时数据库可以直接映射到Entity字段
-                configuration.setMapUnderscoreToCamelCase(Boolean.TRUE);
+    public GzipFilter gzipFilter() {
+        return new GzipFilter();
+    }
 
-            }
-        });
-        return configurationCustomizers;
+    @Bean
+    public FilterRegistrationBean<GzipFilter> filterRegistrationBean() {
+        FilterRegistrationBean<GzipFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(gzipFilter());
+        registration.addUrlPatterns("/*");
+        registration.setName("GzipFilter");
+        return registration;
     }
 
     // ============= 事务配置 START
@@ -159,7 +156,6 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
         interceptor.setTransactionAttributeSource(source);
         return interceptor;
     }
-
     // ============= 事务配置 END
 
     @Bean

@@ -1,16 +1,21 @@
 package com.gitee.linzl.commons.client;
 
+import javax.net.ssl.SSLContext;
 import com.gitee.linzl.commons.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;
+import org.apache.http.HeaderElement;
+import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -19,10 +24,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeaderElementIterator;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
-
-import javax.net.ssl.SSLContext;
 
 /**
  * @author linzhenlie-jk
@@ -31,10 +37,13 @@ import javax.net.ssl.SSLContext;
 @Slf4j
 public class DefaultHttpClient implements IHttpClient {
     public static final int POOL_SIZE = 100;
+
     // 设置连接超时时间,单位毫秒
     public static final int CONNECT_TIMEOUT = 5000;
+
     // 设置读取超时\套接字超时时间,单位毫秒
     public static final int SOCKET_TIMEOUT = 30000;
+
     // 设置从连接池获取连接实例的超时
     public static final int CONNECTION_REQUEST_TIMEOUT = 3000;
 
@@ -42,16 +51,16 @@ public class DefaultHttpClient implements IHttpClient {
 
     public DefaultHttpClient() {
         this(POOL_SIZE, POOL_SIZE,
-                CONNECT_TIMEOUT,
-                SOCKET_TIMEOUT,
-                CONNECTION_REQUEST_TIMEOUT);
+            CONNECT_TIMEOUT,
+            SOCKET_TIMEOUT,
+            CONNECTION_REQUEST_TIMEOUT);
     }
 
     public DefaultHttpClient(Integer maxTotal, Integer defaultMaxPerRoute) {
         this(maxTotal, defaultMaxPerRoute,
-                CONNECT_TIMEOUT,
-                SOCKET_TIMEOUT,
-                CONNECTION_REQUEST_TIMEOUT);
+            CONNECT_TIMEOUT,
+            SOCKET_TIMEOUT,
+            CONNECTION_REQUEST_TIMEOUT);
     }
 
     public DefaultHttpClient(Integer maxTotal, Integer defaultMaxPerRoute, Integer connectTimeout,
@@ -59,17 +68,17 @@ public class DefaultHttpClient implements IHttpClient {
         SSLConnectionSocketFactory sslsf = null;
         try {
             SSLContext sslContext =
-                    (new SSLContextBuilder()).loadTrustMaterial(null, (chain, authType) -> true).build();
+                (new SSLContextBuilder()).loadTrustMaterial(null, (chain, authType) -> true).build();
             // 信任所有
             sslsf = new SSLConnectionSocketFactory(sslContext, (s, sslSession) -> true);
         } catch (Exception e) {
         }
 
         PoolingHttpClientConnectionManager connMgr = new PoolingHttpClientConnectionManager(
-                RegistryBuilder.<ConnectionSocketFactory>create()
-                        .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                        .register("https", sslsf)
-                        .build()
+            RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("https", sslsf)
+                .build()
         );
         // 设置连接池总共大小
         connMgr.setMaxTotal(maxTotal);
@@ -87,10 +96,30 @@ public class DefaultHttpClient implements IHttpClient {
         RequestConfig requestConfig = cfgBuilder.build();
 
         httpClient = HttpClients.custom()
-                .setConnectionManager(connMgr)
-                .setDefaultRequestConfig(requestConfig)
-                .setRetryHandler(new DefaultHttpRequestRetryHandler(0, false))
-                .build();
+            .setConnectionManager(connMgr)
+            .setDefaultRequestConfig(requestConfig)
+            .setRetryHandler(new DefaultHttpRequestRetryHandler(0, false))
+            //对Keep Alive 策略配置
+            .setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
+                @Override
+                public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+                    HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+                    while (it.hasNext()) {
+                        HeaderElement he = it.nextElement();
+                        String param = he.getName(), value = he.getValue();
+                        if (value != null && "timeout".equalsIgnoreCase(param)) {
+                            try {
+                                return Long.parseLong(value) * 1000;
+                            } catch (NumberFormatException ignore) {
+                                //否则保持活动0秒
+                                return 0L;
+                            }
+                        }
+                    }
+                    return 0L;
+                }
+            })
+            .build();
     }
 
     @Override
@@ -105,15 +134,15 @@ public class DefaultHttpClient implements IHttpClient {
         HttpPost httpPost = new HttpPost(url);
         custom(httpPost, apiMethod);
         HttpEntity strEntity = EntityBuilder.create()
-                .setContentType(ContentType.APPLICATION_JSON)
-                .setText(json)
-                .build();
+            .setContentType(ContentType.APPLICATION_JSON)
+            .setText(json)
+            .build();
         httpPost.setEntity(strEntity);
 
         try (CloseableHttpResponse clsResp = httpClient.execute(httpPost);) {
             if (clsResp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
                 throw new ApiException(String.valueOf(clsResp.getStatusLine().getStatusCode()),
-                        clsResp.getStatusLine().getReasonPhrase());
+                    clsResp.getStatusLine().getReasonPhrase());
             }
             return EntityUtils.toString(clsResp.getEntity(), Consts.UTF_8);
         } catch (Exception e) {

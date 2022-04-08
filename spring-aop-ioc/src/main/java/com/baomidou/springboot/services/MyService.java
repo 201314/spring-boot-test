@@ -10,8 +10,6 @@ import com.gitee.linzl.commons.api.ApiResult;
 import com.gitee.linzl.commons.enums.BaseErrorCode;
 import com.gitee.linzl.commons.exception.BusinessException;
 import com.gitee.linzl.commons.tools.ApiResults;
-import com.gitee.linzl.datasource.DynamicDataSourceHolder;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
