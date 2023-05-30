@@ -1,7 +1,7 @@
 package com.gitee.linzl.commons.tools;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.collections4.map.LRUMap;
 
 import java.io.IOException;
 import java.net.*;

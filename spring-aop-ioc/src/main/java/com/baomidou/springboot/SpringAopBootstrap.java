@@ -157,18 +157,4 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
         return interceptor;
     }
     // ============= 事务配置 END
-
-    @Bean
-    public GzipFilter gzipFilter() {
-        return new GzipFilter();
-    }
-
-    @Bean
-    public FilterRegistrationBean<GzipFilter> filterRegistrationBean() {
-        FilterRegistrationBean<GzipFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(gzipFilter());
-        registration.addUrlPatterns("/*");
-        registration.setName("GzipFilter");
-        return registration;
-    }
 }
