@@ -30,30 +30,49 @@ import org.junit.Test;
 @Slf4j
 public class HiveSQLTest {
     @Test
-    public void drop() {
+    public void drop1() {
         log.info("1=========");
         String sql = "DROP TABLE fin_dw.dwd_trade_loan_pda;";
-        //HiveSqlUtil.parser(sql);
-        HiveSqlUtil.parser1(sql);
-
-        log.info("2=========");
         String correctSql = "DROP TABLE IF EXISTS fin_dw.dwd_trade_loan_pda;";
-        //HiveSqlUtil.parser(correctSql);
-        //HiveSqlUtil.parser1(correctSql);
-
-        log.info("3=========");
-        String correctSql2 = "INSERT OVERWRITE TABLE dwd_tmp.test " +
-            " SELECT * FROM (" +
-            " select distinct loan_no,user_name FROM A a where a.id = 1 AND date(a.time_submit)>'11'" +
-            " UNION ALL " +
-            " select distinct loan_no,user_name FROM A a where a.id = 2 AND a.time>'22'" +
-            " )b WHERE b.id = 3;";
-        //HiveSqlUtil.parser(correctSql2);
-        //HiveSqlUtil.parser1(correctSql2);
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
     }
 
     @Test
-    public void creat() {
+    public void drop2() {
+        String sql = "INSERT OVERWRITE TABLE dwd_tmp.test " +
+            " SELECT * FROM (" +
+            " select distinct loan_no,user_name FROM A where id = 1 AND date(time_submit)>'11'" +
+            " UNION ALL " +
+            " select distinct loan_no,user_name FROM A where id = 2 AND time>'22'" +
+            " )b WHERE b.id = 3;";
+        String correctSql = "INSERT OVERWRITE TABLE dwd_tmp.test" +
+            "SELECT  * FROM (\n" +
+            " SELECT  loan_no,user_name FROM A WHERE id = 1 AND date(time_submit) > '11'\n" +
+            " GROUP BY  loan_no,user_name\n" +
+            " UNION ALL\n" +
+            " SELECT  loan_no,user_name FROM A WHERE id = 2 AND time > '22'\n" +
+            " GROUP BY  loan_no,user_name\n" +
+            ") AS b WHERE b.id = 3;"
+            ;
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
+    }
+
+    @Test
+    public void create() {
         String sql =
             "CREATE TABLE fin_dw.dwd_trade_loan_pda ( \n" +
                 "     user_no                 string         COMMENT  '用户号' \n" +
@@ -73,35 +92,14 @@ public class HiveSQLTest {
                 "      pday        string COMMENT  '' \n" +
                 "     ,source_type string COMMENT  '数据源类型:JT借条,WLH微零花,MALL商城' \n" +
                 ") USING TEXT \n";
-        //HiveSqlUtil.parser(sql);
-        HiveSqlUtil.parser1(sql);
-    }
-
-    @Test
-    public void alter() {
-        String sql = "ALTER TABLE fin_dw.dwd_trade_loan_pda RENAME TO fin_dw.dwd_trade_loan_pda2;";
-        HiveSqlUtil.parser(sql);
-
-        String sql1 = "ALTER TABLE fin_dw.dwd_trade_loan_ice_static_pdi CHANGE COLUMN year_rate year_rate DECIMAL(17,9)" +
-            " COMMENT '';";
-        HiveSqlUtil.parser(sql1);
-
-        String sql2 = "ALTER TABLE fin_dw.dwd_trade_loan_pda ADD COLUMNS(" +
-            "        is_due_mob37_01         string         COMMENT  '达mob37且1天观察日'" +
-            "        ,over_due_days_mob37_01 string         COMMENT  ''" +
-            "        ,act_prin_amt_mob37_01  decimal(17,2)  COMMENT  '达mob37且1天观察日实还本金'" +
-            "        ,is_due_mob37_04        string         COMMENT  '达mob37且4天观察日'" +
-            "    );";
-
-        HiveSqlUtil.parser(sql2);
-
-        String sql3 = "ALTER TABLE fin_dw.dwd_trade_loan_pda REPLACE COLUMNS(" +
-            "        is_due_mob37_01        string         COMMENT  '达mob37且1天观察日'" +
-            "        ,over_due_days_mob37_01 string         COMMENT  '达mob37且1天观察日逾期天数'" +
-            "        ,act_prin_amt_mob37_01  decimal(17,2) COMMENT  ''" +
-            "        ,is_due_mob37_04        string         COMMENT  '达mob37且4天观察日'" +
-            "    );";
-        HiveSqlUtil.parser(sql3);
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
     }
 
     @Test
@@ -128,7 +126,14 @@ public class HiveSQLTest {
             + "ON t2.loan_no = t4.loan_no\n"
             + "RIGHT JOIN dwd_tmp.tmp05_his AS t5\n"
             + "ON t5.loan_no = t4.loan_no;\n";
-        HiveSqlUtil.parser1(sql);
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
     }
 
     @Test
@@ -142,17 +147,95 @@ public class HiveSQLTest {
             + "FROM dwd_tmp.tmp00_his\n"
             + "LEFT JOIN dwd_tmp.tmp01_his AS t1\n"
             + "ON t0.loan_no = t1.loan_no AND '1'='1'\n";
-        HiveSqlUtil.parser1(sql);
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
+    }
 
-        String sql1 = "CREATE TABLE IF NOT EXISTS dwd_tmp.test USING TEXT AS \n"
+    @Test
+    public void create4() {
+        String sql = "CREATE TABLE IF NOT EXISTS dwd_tmp.test USING TEXT AS \n"
             + "SELECT  *\n"
             + "FROM dwd_tmp.tmp00_his AS t0 where t0.id in (select id FROM dwd_tmp.tmp01_his)\n";
-        //HiveSqlUtil.parser(sql1);
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
+    }
 
-        String sql2 = "CREATE TABLE IF NOT EXISTS dwd_tmp.test USING TEXT AS \n"
+    @Test
+    public  void create5() {
+        String sql = "CREATE TABLE IF NOT EXISTS dwd_tmp.test USING TEXT AS \n"
             + "SELECT  t.id AS id2\n"
             + "FROM (select * FROM (select * FROM dwd_tmp.tmp01_his where 1=1) AS a1  where 2=2) AS a2 where a2.id=1\n";
-        //HiveSqlUtil.parser(sql2);
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
+    }
+
+    @Test
+    public void alter() {
+        String sql = "ALTER TABLE fin_dw.dwd_trade_loan_ice_static_pdi CHANGE COLUMN year_rate year_rate DECIMAL(17,9)" +
+            " COMMENT '';";
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
+    }
+
+    @Test
+    public void alter1() {
+        String sql = "ALTER TABLE fin_dw.dwd_trade_loan_pda ADD COLUMNS(" +
+            "        is_due_mob37_01         string         COMMENT  '达mob37且1天观察日'" +
+            "        ,over_due_days_mob37_01 string         COMMENT  ''" +
+            "        ,act_prin_amt_mob37_01  decimal(17,2)  COMMENT  '达mob37且1天观察日实还本金'" +
+            "        ,is_due_mob37_04        string         COMMENT  '达mob37且4天观察日'" +
+            "    );";
+
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
+    }
+
+    @Test
+    public void alter2() {
+        String sql = "ALTER TABLE fin_dw.dwd_trade_loan_pda REPLACE COLUMNS(" +
+            "        is_due_mob37_01        string         COMMENT  '达mob37且1天观察日'" +
+            "        ,over_due_days_mob37_01 string         COMMENT  '达mob37且1天观察日逾期天数'" +
+            "        ,act_prin_amt_mob37_01  decimal(17,2) COMMENT  ''" +
+            "        ,is_due_mob37_04        string         COMMENT  '达mob37且4天观察日'" +
+            "    );";
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
     }
 
     @Test
@@ -179,7 +262,14 @@ public class HiveSQLTest {
             + "ON t2.loan_no = t3.loan_no\n"
             + "LEFT JOIN dwd_tmp.tmp04_his AS t4\n"
             + "ON t2.loan_no = t4.loan_no;\n";
-        HiveSqlUtil.parser(sql);
+        HiveStatementParser parser = new HiveStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        HiveRuleCheckVisitor visitor = new HiveRuleCheckVisitor();
+        List<SQLExprTableSource> tableList = new ArrayList<>();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            tableList.addAll(visitor.getTableList());
+        });
     }
 
     @Test

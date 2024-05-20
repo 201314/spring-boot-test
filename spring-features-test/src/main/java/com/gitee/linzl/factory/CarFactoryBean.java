@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CarFactoryBean implements FactoryBean<CarDomain> {
-    private String carInfo = "超级跑车，400，2000000";
+    private String carInfo = "超级跑车,400,2000000";
 
     @Override
     public CarDomain getObject() throws Exception {

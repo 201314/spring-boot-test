@@ -3,30 +3,17 @@ package com.baomidou.springboot.sql;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import com.alibaba.druid.sql.SQLUtils;
-import com.alibaba.druid.sql.ast.SQLDataType;
-import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLIndexDefinition;
 import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
-import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
-import com.alibaba.druid.sql.ast.statement.SQLColumnDefinition;
 import com.alibaba.druid.sql.ast.statement.SQLTableElement;
-import com.alibaba.druid.sql.dialect.mysql.ast.MySqlKey;
-import com.alibaba.druid.sql.dialect.mysql.ast.MySqlPrimaryKey;
 import com.alibaba.druid.sql.dialect.mysql.ast.MySqlUnique;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.alibaba.druid.sql.dialect.mysql.parser.MySqlStatementParser;
 import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
-import com.alibaba.druid.sql.visitor.VisitorFeature;
+import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlSchemaStatVisitor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 /**
@@ -154,9 +141,28 @@ public class MySQLTest {
         String sqlContent = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         MySqlStatementParser parser = new MySqlStatementParser(sqlContent);
         List<SQLStatement> stmtList = parser.parseStatementList();
-        MySqlToHiveOutputVisitor visitor = new MySqlToHiveOutputVisitor(file2);
+        MySqlToHiveOutputVisitor visitor = new MySqlToHiveOutputVisitor();
+        stmtList.forEach(sqlStatement -> {
+            sqlStatement.accept(visitor);
+            System.out.println(visitor.getContent());
+        });
+    }
+
+    @Test
+    public void parseMysql() throws IOException {
+        String sql = "SELECT new_third_category\n" +
+            "FROM ads_r_f_vintage_a_gebaoqi\n" +
+            " where '${Param_Product}' = '借条API&商城'\n" +
+            " and assets_class in ('借条API&商城') \n" +
+            "group by 1\n" +
+            "order by convert(new_third_category using gbk)";
+        MySqlStatementParser parser = new MySqlStatementParser(sql);
+        List<SQLStatement> stmtList = parser.parseStatementList();
+        MySqlSchemaStatVisitor visitor = new MySqlSchemaStatVisitor();
         stmtList.forEach(sqlStatement -> {
             sqlStatement.accept(visitor);
         });
+        System.out.println(visitor.getOriginalTables());
     }
+
 }

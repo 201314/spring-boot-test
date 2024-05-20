@@ -54,6 +54,9 @@ public class BeanRegistrationUtil {
             // 设置普通类型属性值
             extraPropertyValues.entrySet().stream().forEach(entry -> builder.addPropertyValue(entry.getKey(), entry.getValue()));
         }
+        // 自定义配置
+        builder.applyCustomizers(bd -> {});
+
         //获取BeanDefinition
         BeanDefinition beanDefinition = builder.getBeanDefinition();
         //向bean注册器(容器)中注册bean
