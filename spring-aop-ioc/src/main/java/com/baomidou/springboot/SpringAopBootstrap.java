@@ -1,8 +1,5 @@
 package com.baomidou.springboot;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import com.gitee.linzl.EnableAutoCommons;
 import com.gitee.linzl.commons.filter.gzip.GzipFilter;
 import lombok.extern.slf4j.Slf4j;
@@ -44,12 +41,6 @@ import java.util.Map;
  *  继承SpringBootServletInitializer，则可打包成war部署在外置tomcat下,否则只能通过 java -jar 命令启动
  */
 public class SpringAopBootstrap extends SpringBootServletInitializer {
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        builder.bannerMode(Banner.Mode.OFF);
-        return builder.sources(SpringAopBootstrap.class);
-    }
-
     public static void main(String[] args) {
         SpringApplicationBuilder app = new SpringApplicationBuilder(SpringAopBootstrap.class);
         app.bannerMode(Banner.Mode.OFF);
@@ -60,36 +51,6 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
             System.out.println(beanDefinitionName + "==>" + context.getBean(beanDefinitionName));
         }
     }
-
-    // -----  对Controller getUser方法进行跟踪 START
-    @Bean
-    public Advisor jpaRepositoryAdvisor() {
-        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("execution(* com.baomidou.springboot.controller.*Rest.getUser())");
-        return new DefaultPointcutAdvisor(pointcut, customizableTraceInterceptor());
-    }
-
-    @Bean
-    public CustomizableTraceInterceptor customizableTraceInterceptor() {
-        return new CustomizableTraceInterceptor();
-    }
-    // -----  对Controller getUser方法进行跟踪 END
-
-    @Bean
-    public GzipFilter gzipFilter() {
-        return new GzipFilter();
-    }
-
-    @Bean
-    public FilterRegistrationBean<GzipFilter> filterRegistrationBean() {
-        FilterRegistrationBean<GzipFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(gzipFilter());
-        registration.addUrlPatterns("/*");
-        registration.setName("GzipFilter");
-        return registration;
-    }
-
-    // ============= 事务配置 START
 
     /**
      * 切面拦截规则
@@ -102,28 +63,40 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
         return new DefaultPointcutAdvisor(pointcut, transactionInterceptor);
     }
 
-    /**
-     * 事务拦截类型
-     */
-    @Profile("trxRequired")
-    @Bean("transactionInterceptorExt")
-    public TransactionInterceptor trxRequired(PlatformTransactionManager transactionManager) {
-        log.info("配置事务配置trxRequired");
-        Map<String, TransactionAttribute> txMap = new HashMap<>(5);
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        builder.bannerMode(Banner.Mode.OFF);
+        return builder.sources(SpringAopBootstrap.class);
+    }
 
-        /*当前存在事务就使用当前事务，当前不存在事务就创建一个新的事务*/
-        RuleBasedTransactionAttribute requiredTx =
-                new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED,
-                        Collections.singletonList(new RollbackRuleAttribute(Exception.class)));
-        requiredTx.setReadOnly(false);
-        txMap.put("*Trx", requiredTx);
+    @Bean
+    public CustomizableTraceInterceptor customizableTraceInterceptor() {
+        return new CustomizableTraceInterceptor();
+    }
+    // -----  对Controller getUser方法进行跟踪 END
 
-        NameMatchTransactionAttributeSource source = new NameMatchTransactionAttributeSource();
-        source.setNameMap(txMap);
-        TransactionInterceptor interceptor = new TransactionInterceptor();
-        interceptor.setTransactionManager(transactionManager);
-        interceptor.setTransactionAttributeSource(source);
-        return interceptor;
+    @Bean
+    public FilterRegistrationBean<GzipFilter> filterRegistrationBean() {
+        FilterRegistrationBean<GzipFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(gzipFilter());
+        registration.addUrlPatterns("/*");
+        registration.setName("GzipFilter");
+        return registration;
+    }
+
+    @Bean
+    public GzipFilter gzipFilter() {
+        return new GzipFilter();
+    }
+
+    // ============= 事务配置 START
+
+    // -----  对Controller getUser方法进行跟踪 START
+    @Bean
+    public Advisor jpaRepositoryAdvisor() {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+        pointcut.setExpression("execution(* com.baomidou.springboot.controller.*Rest.getUser())");
+        return new DefaultPointcutAdvisor(pointcut, customizableTraceInterceptor());
     }
 
     @Profile("trxAndSupport")
@@ -156,5 +129,44 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
         interceptor.setTransactionAttributeSource(source);
         return interceptor;
     }
+
+    /**
+     * 事务拦截类型
+     */
+    @Profile("trxRequired")
+    @Bean("transactionInterceptorExt")
+    public TransactionInterceptor trxRequired(PlatformTransactionManager transactionManager) {
+        log.info("配置事务配置trxRequired");
+        Map<String, TransactionAttribute> txMap = new HashMap<>(5);
+
+        /*当前存在事务就使用当前事务，当前不存在事务就创建一个新的事务*/
+        RuleBasedTransactionAttribute requiredTx =
+                new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED,
+                        Collections.singletonList(new RollbackRuleAttribute(Exception.class)));
+        requiredTx.setReadOnly(false);
+        txMap.put("*Trx", requiredTx);
+
+        NameMatchTransactionAttributeSource source = new NameMatchTransactionAttributeSource();
+        source.setNameMap(txMap);
+        TransactionInterceptor interceptor = new TransactionInterceptor();
+        interceptor.setTransactionManager(transactionManager);
+        interceptor.setTransactionAttributeSource(source);
+        return interceptor;
+    }
     // ============= 事务配置 END
+
+    @Profile("mybatisSessionClose")
+    @Bean
+    public List<ConfigurationCustomizer> list() {
+        log.info("Session一级缓存【关闭】");
+        List<ConfigurationCustomizer> configurationCustomizers = new ArrayList<>();
+        configurationCustomizers.add(new ConfigurationCustomizer() {
+            @Override
+            public void customize(Configuration configuration) {
+                // Session一级缓存【关闭】
+                configuration.setLocalCacheScope(LocalCacheScope.STATEMENT);
+            }
+        });
+        return configurationCustomizers;
+    }
 }
