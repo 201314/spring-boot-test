@@ -154,19 +154,4 @@ public class SpringAopBootstrap extends SpringBootServletInitializer {
         return interceptor;
     }
     // ============= 事务配置 END
-
-    @Profile("mybatisSessionClose")
-    @Bean
-    public List<ConfigurationCustomizer> list() {
-        log.info("Session一级缓存【关闭】");
-        List<ConfigurationCustomizer> configurationCustomizers = new ArrayList<>();
-        configurationCustomizers.add(new ConfigurationCustomizer() {
-            @Override
-            public void customize(Configuration configuration) {
-                // Session一级缓存【关闭】
-                configuration.setLocalCacheScope(LocalCacheScope.STATEMENT);
-            }
-        });
-        return configurationCustomizers;
-    }
 }

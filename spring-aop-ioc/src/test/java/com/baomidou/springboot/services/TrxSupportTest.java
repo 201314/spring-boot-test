@@ -9,28 +9,36 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-/**
- * @author linzhenlie-jk
- * @date 2021/8/10
- */
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-@ActiveProfiles({"trxRequired", "mybatisSessionClose"})
-public class TrxRequiredAndSessionCloseTest {
+@ActiveProfiles({"trxAndSupport"})
+public class TrxSupportTest {
     @Autowired
     private TradeOrderService service;
 
     @Test
-    public void doBiz2() {
-        log.info("doBiz1无事务,事务REQUIRED,mybatis Session一级缓存【关闭】");
-        //service.doBiz1NoException();
-        service.testTrx();
+    public void doBiz3() throws JsonProcessingException {
+        log.info("doBiz1无事务,事务REQUIRED、SUPPORT");
+        service.doBiz1NoException();
     }
 
     @Test
-    public void doBiz2Trx() throws JsonProcessingException {
-        log.info("doBiz1Trx有事务,事务REQUIRED,mybatis Session一级缓存【关闭】");
+    public void doBiz3Trx() throws JsonProcessingException {
+        log.info("doBiz1Trx有事务,事务REQUIRED、SUPPORT");
         service.doBiz1NoExceptionTrx();
+    }
+
+    @Test
+    public void doBiz5TrxAndThis() {
+        log.info("doBiz5TrxAndThis");
+        service.doBiz5TrxAndThis();
+    }
+
+    @Test
+    public void doBiz5TrxAndThisTrx() {
+        log.info("doBiz5TrxAndThisTrx");
+        service.doBiz5TrxAndThisTrx();
     }
 }

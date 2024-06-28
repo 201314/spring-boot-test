@@ -1,3 +1,6 @@
+server:
+  # graceful优雅停机、immediate立即停机
+  shutdown: graceful
 spring:
   application:
     name: spring-aop-ioc

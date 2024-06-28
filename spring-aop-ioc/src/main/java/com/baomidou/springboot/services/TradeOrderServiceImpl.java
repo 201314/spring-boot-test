@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 
@@ -28,42 +29,11 @@ public class TradeOrderServiceImpl implements TradeOrderService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Override
-    public void saveTrx(Long id) {
-        TpTradeOrder order = new TpTradeOrder();
-        order.setId(id);
-        // 1 待支付，2支付中，3支付成功，4支付失败，5支付关闭
-        order.setTradeStatus("1");
-        order.setHello("随意1");
-        order.setCreatedBy("创建者1");
-        order.setUpdatedBy("修改者1");
-        mapper.insertSelective(order);
-    }
-
-
-    @Override
-    public void updateTrx(TpTradeOrder order, Boolean throwException) {
-        mapper.updateByPrimaryKeySelective(order);
-        if (throwException) {
-            int i = 1 / 0;
-        }
-    }
-
-
-    @Override
-    public void doBiz1NoException() throws JsonProcessingException {
-        Long id = RandomUtils.nextLong();
-        saveTrx(id);
-        doBiz11(id, Boolean.FALSE);
-        doBiz12(id, Boolean.FALSE);
-    }
-
-    @Override
-    public void doBiz1NoExceptionTrx() throws JsonProcessingException {
-        Long id = RandomUtils.nextLong();
-        saveTrx(id);
-        doBiz11(id, Boolean.FALSE);
-    }
+    /**
+     * 建议使用编程式事务,粒度可控制更小,但是侵入业务代码
+     */
+    @Autowired
+    private TransactionTemplate transaction;
 
     private void doBiz11(Long id, Boolean throwException) throws JsonProcessingException {
         TpTradeOrder order = mapper.selectById(id);
@@ -96,6 +66,40 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         }
     }
 
+    @Override
+    public void saveTrx(Long id) {
+        TpTradeOrder order = new TpTradeOrder();
+        order.setId(id);
+        // 1 待支付，2支付中，3支付成功，4支付失败，5支付关闭
+        order.setTradeStatus("1");
+        order.setHello("随意1");
+        order.setCreatedBy("创建者1");
+        order.setUpdatedBy("修改者1");
+        mapper.insertSelective(order);
+    }
+
+    @Override
+    public void updateTrx(TpTradeOrder order, Boolean throwException) {
+        mapper.updateByPrimaryKeySelective(order);
+        if (throwException) {
+            int i = 1 / 0;
+        }
+    }
+
+    @Override
+    public void doBiz1NoException() throws JsonProcessingException {
+        Long id = RandomUtils.nextLong();
+        saveTrx(id);
+        doBiz11(id, Boolean.FALSE);
+        doBiz12(id, Boolean.FALSE);
+    }
+
+    @Override
+    public void doBiz1NoExceptionTrx() throws JsonProcessingException {
+        Long id = RandomUtils.nextLong();
+        saveTrx(id);
+        doBiz11(id, Boolean.FALSE);
+    }
 
     /**
      * doBiz5TrxAndThis 没有设置事务，updateTrx 设置了事务，doBiz5TrxAndThis 调用 updateTrx 时，updateTrx 事务失效

@@ -17,20 +17,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @Slf4j
 @ActiveProfiles({"trxRequired"})
-public class TrxRequiredAndSessionOpenTest {
+public class TrxRequiredTest {
     @Autowired
     private TradeOrderService service;
 
     @Test
     public void doBiz1() throws JsonProcessingException {
-        log.info("doBiz1无事务,事务REQUIRED,mybatis Session一级缓存【默认开启】");
+        log.info("doBiz1无事务,事务REQUIRED");
         service.doBiz1NoException();
         // doBiz1无事务 save成功，updateTrx事务回滚
     }
 
     @Test
     public void doBiz1Trx() throws JsonProcessingException {
-        log.info("doBiz1Trx有事务,事务REQUIRED,mybatis Session一级缓存【默认开启】");
+        log.info("doBiz1Trx有事务,事务REQUIRED");
         service.doBiz1NoExceptionTrx();
         // doBiz1Trx有事务 save成功，updateTrx事务回滚, doBiz1Trx事务回滚，全部回滚
     }
